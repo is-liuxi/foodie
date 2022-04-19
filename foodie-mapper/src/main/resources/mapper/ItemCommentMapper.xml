@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liuxi.mapper.ItemCommentMapper">
+
+    <select id="queryCommentsPage" resultType="itemCommentsVo">
+        SELECT
+            u.face AS userFact,
+            u.nickname AS nickname,
+            ic.created_time AS createdTime,
+            ic.comment_level AS commentLevel,
+            ic.content AS content,
+            ic.sepc_name AS specName
+        FROM
+            items_comments ic
+            INNER JOIN users u ON ic.user_id = u.id
+        WHERE
+	        ic.item_id = #{itemId}
+	        <if test="commentLevel">
+                , ic.comment_level = commentLevel
+            </if>
+        LIMIT #{page}, #{pageSize}
+    </select>
+
+    <select id="queryCommentsPageCount" resultType="long">
+        SELECT
+            count(*)
+        FROM
+            items_comments ic
+            INNER JOIN users u ON ic.user_id = u.id
+        WHERE
+            ic.item_id = #{itemId}
+            <if test="commentLevel">
+                , ic.comment_level = commentLevel
+            </if>
+    </select>
+
+    <select id="queryCommentLevel" resultType="com.liuxi.pojo.vo.ItemCommentLevelVo">
+        SELECT
+            count(*) AS commentLevelTotal,
+            ( CASE comment_level
+                WHEN 1 THEN "goodCounts"
+                WHEN 2 THEN "normalCounts"
+                WHEN 3 THEN "badCounts"
+            END ) AS commentLevel
+        FROM
+            items_comments
+        WHERE
+            item_id = #{itemId}
+        GROUP BY
+            comment_level
+    </select>
+</mapper>
