@@ -71,6 +71,11 @@ public class ItemServiceImpl implements ItemService {
         // 开始记录行
         int startNum = (page - 1) * pageSize;
         List<ItemCommentsVo> resultPage = itemCommentMapper.queryCommentsPage(itemId, level, startNum, pageSize);
+        resultPage.forEach(item -> {
+            String nickname = item.getNickname();
+            String desensitization = desensitization(nickname);
+            item.setNickname(desensitization);
+        });
         // 总条数
         long records = this.queryCommentsPageCount(itemId, level);
         // 总页数
@@ -100,7 +105,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public PageResult<SearchItemsVo> search(String keywords, String sort, int page, int pageSize) {
+    public PageResult<SearchItemsVo> searchByKeWords(String keywords, String sort, int page, int pageSize) {
         // 当前页
         int currentPage = (page - 1) * pageSize;
         //【k：默认排序，c：销量排序，p：价格排序】
@@ -109,7 +114,7 @@ public class ItemServiceImpl implements ItemService {
         } else if (SortEnum.PRICE.type.equals(sort)) {
             sort = "price";
         } else {
-            sort = "i.created_time";
+            sort = "itemName";
         }
         List<SearchItemsVo> searchItemList = itemMapper.searchItemByKeyWord(keywords, sort, currentPage, pageSize);
 
@@ -122,5 +127,35 @@ public class ItemServiceImpl implements ItemService {
         long total = records % pageSize;
         total = (total == 0) ? records / pageSize : (records / pageSize) + 1;
         return new PageResult<>(page, total, records, searchItemList);
+    }
+
+    @Override
+    public PageResult<SearchItemsVo> searchByCatItems(Integer catId, String sort, int page, int pageSize) {
+        // limit 分页从零开始
+        int currentPage = (page - 1) * pageSize;
+        List<SearchItemsVo> itemList = itemMapper.searchByCatId(catId, sort, currentPage, pageSize);
+        // 查询总条数
+        long count = itemMapper.selectCount(new LambdaQueryWrapper<>(Items.class).eq(Items::getCatId, catId));
+        long pageTotal = count % pageSize;
+        pageTotal = (pageTotal == 0) ? (count / pageSize) : (count / pageSize) + 1;
+        return new PageResult<>(page, pageTotal, count, itemList);
+    }
+
+    /**
+     * 数据脱敏
+     * @param str
+     * @return
+     */
+    private String desensitization(String str) {
+        String[] strArr = str.split("");
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < strArr.length; i++) {
+            if (i == 0 || (i == strArr.length - 1)) {
+                result.append(strArr[i]);
+                continue;
+            }
+            result.append("*");
+        }
+        return result.toString();
     }
 }

@@ -13,7 +13,7 @@ import java.util.Date;
  */
 @Data
 public class ItemCommentsVo {
-    private String userFact;
+    private String userFace;
     private String nickname;
     private Integer commentLevel;
     private Date createdTime;

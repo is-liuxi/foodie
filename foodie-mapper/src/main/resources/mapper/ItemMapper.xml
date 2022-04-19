@@ -13,7 +13,8 @@
             ii.url AS imgUrl
         FROM
             `items` i
-            LEFT JOIN ( SELECT * FROM items_spec GROUP BY item_id ) ise ON i.id = ise.item_id
+            /* 搜索展示最小的价格商品 spu */
+            LEFT JOIN ( SELECT min( price_discount ) AS price_discount, item_id FROM items_spec GROUP BY item_id ) ise ON i.id = ise.item_id
             LEFT JOIN items_img ii ON i.id = ii.item_id
         WHERE
             i.on_off_status = 1
@@ -22,6 +23,37 @@
         ORDER BY
             /* 字符串和变量值 */
             ${sort} DESC
+        LIMIT
+            #{page}, #{pageSize}
+    </select>
+
+    <select id="searchByCatId" resultType="searchItemsVo">
+        SELECT
+            i.id AS itemId,
+            i.item_name AS itemName,
+            i.sell_counts AS sellCounts,
+            ise.price_discount AS price,
+            ii.url AS imgUrl
+        FROM
+            items i
+            LEFT JOIN ( SELECT min( price_discount ) AS price_discount, item_id FROM items_spec GROUP BY item_id ) ise ON i.id = ise.item_id
+            LEFT JOIN items_img ii ON i.id = ii.item_id
+        WHERE
+            i.on_off_status = 1
+            AND ii.is_main = 1
+            AND i.cat_id = #{catId}
+        ORDER BY
+            <choose>
+                <when test="sort == 'c'.toString()">
+                    sellCounts DESC
+                </when>
+                <when test="sort == 'p'.toString()">
+                    price DESC
+                </when>
+                <otherwise>
+                    itemName ASC
+                </otherwise>
+            </choose>
         LIMIT
             #{page}, #{pageSize}
     </select>

@@ -6,7 +6,7 @@
 
     <select id="queryCommentsPage" resultType="itemCommentsVo">
         SELECT
-            u.face AS userFact,
+            u.face AS userFace,
             u.nickname AS nickname,
             ic.created_time AS createdTime,
             ic.comment_level AS commentLevel,
@@ -17,7 +17,7 @@
             INNER JOIN users u ON ic.user_id = u.id
         WHERE
 	        ic.item_id = #{itemId}
-	        <if test="commentLevel">
+	        <if test="commentLevel != null and commentLevel != ''">
                 , ic.comment_level = commentLevel
             </if>
         LIMIT #{page}, #{pageSize}

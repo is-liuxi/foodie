@@ -2,6 +2,7 @@ package com.liuxi.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.liuxi.pojo.Items;
+import com.liuxi.pojo.page.PageResult;
 import com.liuxi.pojo.vo.SearchItemsVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -26,4 +27,15 @@ public interface ItemMapper extends BaseMapper<Items> {
      */
     List<SearchItemsVo> searchItemByKeyWord(@Param("keywords") String keywords, @Param("sort") String sort,
                                @Param("page") int page, @Param("pageSize") int pageSize);
+
+    /**
+     * 根据商品类别搜索
+     * @param catId
+     * @param sort
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    List<SearchItemsVo> searchByCatId(@Param("catId") Integer catId, @Param("sort") String sort,
+                                            @Param("page") int page, @Param("pageSize") int pageSize);
 }

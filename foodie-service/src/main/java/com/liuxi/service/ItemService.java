@@ -81,5 +81,16 @@ public interface ItemService {
      * @param pageSize
      * @return
      */
-    PageResult<SearchItemsVo> search(String keywords, String sort, int page, int pageSize);
+    PageResult<SearchItemsVo> searchByKeWords(String keywords, String sort, int page, int pageSize);
+
+    /**
+     * 根据商品类别搜索
+     * @param catId
+     * @param sort
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    PageResult<SearchItemsVo> searchByCatItems(Integer catId, String sort, int page, int pageSize);
+
 }
