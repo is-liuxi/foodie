@@ -7,6 +7,7 @@ import com.liuxi.pojo.vo.NewItemsVo;
 import com.liuxi.service.CarouselService;
 import com.liuxi.service.CategoryService;
 import com.liuxi.util.common.ResultJsonResponse;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("index")
+@Api(tags = "首页", description = "首页操作")
 public class IndexController {
 
     @Autowired

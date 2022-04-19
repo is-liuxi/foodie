@@ -31,7 +31,7 @@ import java.nio.charset.StandardCharsets;
  */
 @RestController
 @RequestMapping("user")
-@Api(value = "用户管理", tags = "用户操作")
+@Api(description = "用户管理", tags = "用户操作")
 public class PassportController {
 
     @Autowired
@@ -92,6 +92,7 @@ public class PassportController {
     }
 
     @PostMapping("logout")
+    @ApiOperation(value = "用户注销", notes = "用户退出登录，删除 cookie 信息")
     public ResultJsonResponse logout(@RequestParam("userId") String userId, HttpServletResponse response) {
         Cookie cookie = new Cookie("user", null);
         cookie.setPath("/");

@@ -23,7 +23,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("items")
-@Api(value = "商品操作", tags = "商品详情页")
+@Api(description = "商品操作", tags = "商品详情页")
 public class ItemController {
 
     @Autowired
