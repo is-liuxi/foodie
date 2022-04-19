@@ -1,8 +1,12 @@
 package com.liuxi.service;
 
-import com.liuxi.pojo.*;
+import com.liuxi.pojo.Items;
+import com.liuxi.pojo.ItemsImg;
+import com.liuxi.pojo.ItemsParam;
+import com.liuxi.pojo.ItemsSpec;
 import com.liuxi.pojo.page.PageResult;
 import com.liuxi.pojo.vo.ItemCommentsVo;
+import com.liuxi.pojo.vo.SearchItemsVo;
 
 import java.util.List;
 import java.util.Map;
@@ -68,4 +72,14 @@ public interface ItemService {
      * @return
      */
     Map<String, Integer> queryCommentLevel(String itemId);
+
+    /**
+     * 商品搜索
+     * @param keywords 搜索关键字
+     * @param sort 排序 【k：默认排序，c：销量排序，p：价格排序】
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    PageResult<SearchItemsVo> search(String keywords, String sort, int page, int pageSize);
 }

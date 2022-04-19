@@ -7,13 +7,13 @@ package com.liuxi.util.enums;
  * @author liu xi
  * @date 2022/4/18 16:53
  */
-public enum YesOrNo {
+public enum YesOrNoEnum {
     NO(0, "否"),
     YES(1, "是");
     public final int type;
     public final String value;
 
-    YesOrNo(int type, String value) {
+    YesOrNoEnum(int type, String value) {
         this.type = type;
         this.value = value;
     }

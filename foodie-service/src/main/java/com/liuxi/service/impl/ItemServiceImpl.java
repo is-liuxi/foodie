@@ -9,7 +9,9 @@ import com.liuxi.pojo.ItemsSpec;
 import com.liuxi.pojo.page.PageResult;
 import com.liuxi.pojo.vo.ItemCommentLevelVo;
 import com.liuxi.pojo.vo.ItemCommentsVo;
+import com.liuxi.pojo.vo.SearchItemsVo;
 import com.liuxi.service.ItemService;
+import com.liuxi.util.enums.SortEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -72,8 +74,8 @@ public class ItemServiceImpl implements ItemService {
         // 总条数
         long records = this.queryCommentsPageCount(itemId, level);
         // 总页数
-        long pageSizeResult = records / pageSize;
-        long total = (pageSizeResult == 0) ? pageSizeResult : pageSizeResult + 1;
+        long pageSizeResult = records % pageSize;
+        long total = (pageSizeResult == 0) ? records / pageSize : (records / pageSize) + 1;
         return new PageResult<>(page, total, records, resultPage);
     }
 
@@ -95,5 +97,30 @@ public class ItemServiceImpl implements ItemService {
         // 总评论
         map.put("totalCounts", totalCounts);
         return map;
+    }
+
+    @Override
+    public PageResult<SearchItemsVo> search(String keywords, String sort, int page, int pageSize) {
+        // 当前页
+        int currentPage = (page - 1) * pageSize;
+        //【k：默认排序，c：销量排序，p：价格排序】
+        if (SortEnum.SELL_COUNT.type.equals(sort)) {
+            sort = "sellCounts";
+        } else if (SortEnum.PRICE.type.equals(sort)) {
+            sort = "price";
+        } else {
+            sort = "i.created_time";
+        }
+        List<SearchItemsVo> searchItemList = itemMapper.searchItemByKeyWord(keywords, sort, currentPage, pageSize);
+
+        // 查询商品数量
+        LambdaQueryWrapper<Items> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(Items::getItemName, keywords);
+        // 总记录
+        Long records = itemMapper.selectCount(queryWrapper);
+        // 总页数
+        long total = records % pageSize;
+        total = (total == 0) ? records / pageSize : (records / pageSize) + 1;
+        return new PageResult<>(page, total, records, searchItemList);
     }
 }

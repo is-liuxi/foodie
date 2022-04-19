@@ -3,7 +3,7 @@ package com.liuxi.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.liuxi.pojo.User;
-import com.liuxi.pojo.bo.UserBo;
+import com.liuxi.pojo.vo.UserVo;
 import com.liuxi.service.UserService;
 import com.liuxi.util.common.ResultJsonResponse;
 import io.swagger.annotations.Api;
@@ -15,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -52,7 +50,7 @@ public class PassportController {
 
     @PostMapping("register")
     @ApiOperation(value = "注册用户", notes = "注册用户信息")
-    public ResultJsonResponse createUser(@RequestBody UserBo userBo, HttpServletResponse response) {
+    public ResultJsonResponse createUser(@RequestBody UserVo userBo, HttpServletResponse response) {
         if (userBo == null || StringUtils.isBlank(userBo.getPassword()) || StringUtils.isBlank(userBo.getConfirmPassword())
                 || StringUtils.isBlank(userBo.getUsername())) {
             return ResultJsonResponse.errorMsg("用户信息不能为空");
@@ -79,7 +77,7 @@ public class PassportController {
             @ApiImplicitParam(name = "username", required = true, dataType = "string"),
             @ApiImplicitParam(name = "password", required = true, dataType = "string")
     })
-    public ResultJsonResponse login(@RequestBody UserBo userBo, HttpServletResponse response) {
+    public ResultJsonResponse login(@RequestBody UserVo userBo, HttpServletResponse response) {
         if (userBo == null || StringUtils.isBlank(userBo.getPassword()) || StringUtils.isBlank(userBo.getUsername())) {
             return ResultJsonResponse.errorMsg("用户信息不能为空");
         }

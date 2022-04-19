@@ -1,7 +1,7 @@
 package com.liuxi.service;
 
 import com.liuxi.pojo.User;
-import com.liuxi.pojo.bo.UserBo;
+import com.liuxi.pojo.vo.UserVo;
 
 /**
  * <p>
@@ -25,12 +25,12 @@ public interface UserService {
      * @return
      * @throws Exception
      */
-    User createUser(UserBo userBo);
+    User createUser(UserVo userBo);
 
     /**
      * 用户登录
      * @param userBo
      * @return
      */
-    User login(UserBo userBo);
+    User login(UserVo userBo);
 }

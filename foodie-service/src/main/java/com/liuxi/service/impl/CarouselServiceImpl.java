@@ -3,7 +3,7 @@ package com.liuxi.service.impl;
 import com.liuxi.mapper.CarouselMapper;
 import com.liuxi.pojo.Carousel;
 import com.liuxi.service.CarouselService;
-import com.liuxi.util.enums.YesOrNo;
+import com.liuxi.util.enums.YesOrNoEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +24,6 @@ public class CarouselServiceImpl implements CarouselService {
 
     @Override
     public List<Carousel> queryCarousel() {
-        return carouselMapper.queryCarousel(YesOrNo.YES.type);
+        return carouselMapper.queryCarousel(YesOrNoEnum.YES.type);
     }
 }

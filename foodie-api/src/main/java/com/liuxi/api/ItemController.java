@@ -1,11 +1,17 @@
 package com.liuxi.api;
 
-import com.liuxi.pojo.*;
+import com.liuxi.pojo.Items;
+import com.liuxi.pojo.ItemsImg;
+import com.liuxi.pojo.ItemsParam;
+import com.liuxi.pojo.ItemsSpec;
 import com.liuxi.pojo.page.PageResult;
 import com.liuxi.pojo.vo.ItemCommentsVo;
+import com.liuxi.pojo.vo.SearchItemsVo;
 import com.liuxi.service.ItemService;
 import com.liuxi.util.common.ResultJsonResponse;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -58,5 +64,21 @@ public class ItemController {
     @ApiOperation(value = "查询商品评论总数", notes = "查询商品各种级别评论总数")
     public ResultJsonResponse commentLevel(@PathVariable String itemId) {
         return ResultJsonResponse.ok(itemService.queryCommentLevel(itemId));
+    }
+
+    @GetMapping("search")
+    @ApiOperation(value = "商品搜索", notes = "商品搜索")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "keywords", value = "搜索关键字", required = true),
+            @ApiImplicitParam(name = "sort", value = "显示排序【k：默认排序，c：销量排序，p：价格排序】", required = true),
+            @ApiImplicitParam(name = "page", value = "当前页码", required = true),
+            @ApiImplicitParam(name = "pageSize", value = "页面显示大小", required = true)
+    })
+    public ResultJsonResponse search(@RequestParam("keywords") String keywords,
+                                     @RequestParam(value = "sort", required = false) String sort,
+                                     @RequestParam("page") int page,
+                                     @RequestParam("pageSize") int pageSize) {
+        PageResult<SearchItemsVo> itemList = itemService.search(keywords, sort, page, pageSize);
+        return ResultJsonResponse.ok(itemList);
     }
 }
