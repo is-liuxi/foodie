@@ -32,7 +32,7 @@
             f.father_id = #{rootId}
     </select>
 
-    <!-- 查询最新的六个商品 -->
+    <!-- 查询最新的八个商品 -->
     <select id="querySixNewItemsLazy" resultMap="querySixNewItemsLazy">
         SELECT
             c.id AS rootCatId,
@@ -56,7 +56,7 @@
             AND i.on_off_status = 1
             AND i.root_cat_id = #{paramsMap.rootCartId}
         ORDER BY
-            i.created_time DESC
+            i.sell_counts DESC
             LIMIT 8
     </select>
 
