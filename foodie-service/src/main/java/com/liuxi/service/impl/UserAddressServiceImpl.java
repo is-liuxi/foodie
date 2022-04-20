@@ -38,10 +38,17 @@ public class UserAddressServiceImpl implements UserAddressService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @Override
     public boolean addUserAddress(UserAddress userAddress) {
+        // 判断用户是否存在收货地址，如果没有，新增的地址为默认地址
+        LambdaQueryWrapper<UserAddress> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(UserAddress::getUserId, userAddress.getUserId());
+        queryWrapper.or().eq(UserAddress::getUserId, YesOrNoEnum.YES.type);
+        Long total = userAddressMapper.selectCount(queryWrapper);
+
+        // 存在地址，不设置
+        userAddress.setIsDefault(total > 0 ? YesOrNoEnum.NO.type : YesOrNoEnum.YES.type);
         Date date = new Date();
         userAddress.setUpdatedTime(date);
         userAddress.setCreatedTime(date);
-        userAddress.setIsDefault(YesOrNoEnum.NO.type);
         return userAddressMapper.insert(userAddress) > 0;
     }
 
@@ -50,7 +57,6 @@ public class UserAddressServiceImpl implements UserAddressService {
     public boolean updateUserAddressByUserId(UserAddress userAddress) {
         Date date = new Date();
         userAddress.setUpdatedTime(date);
-        userAddress.setCreatedTime(date);
         return userAddressMapper.updateById(userAddress) > 0;
     }
 
