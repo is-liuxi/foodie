@@ -9,6 +9,7 @@
             i.item_name AS itemName,
             ii.url AS itemImgUrl,
             ise.id AS specId,
+            ise.stock AS specStock,
             ise.`name` AS specName,
             ise.price_normal AS priceNormal,
             ise.price_normal AS priceDiscount

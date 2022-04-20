@@ -16,6 +16,7 @@ public class ShopCartVo {
     String itemImgUrl;
     String specId;
     String specName;
+    Integer specStock;
     Integer buyCounts;
     Integer priceNormal;
     Integer priceDiscount;

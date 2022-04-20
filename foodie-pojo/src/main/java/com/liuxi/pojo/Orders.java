@@ -1,5 +1,6 @@
 package com.liuxi.pojo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 
@@ -16,7 +17,7 @@ public class Orders {
     /**
      * 订单主键;同时也是订单编号
      */
-    @TableId
+    @TableId(type = IdType.ASSIGN_ID)
     private String id;
 
     /**
