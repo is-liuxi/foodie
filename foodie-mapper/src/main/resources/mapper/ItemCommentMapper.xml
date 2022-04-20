@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.liuxi.mapper.ItemCommentMapper">
 
-    <select id="queryCommentsPage" resultType="itemCommentsVo">
+    <select id="queryCommentsPage" resultType="itemCommentVo">
         SELECT
             u.face AS userFace,
             u.nickname AS nickname,

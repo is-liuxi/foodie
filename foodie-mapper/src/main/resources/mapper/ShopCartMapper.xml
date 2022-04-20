@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liuxi.mapper.ShopCartMapper">
+    <select id="selectCartsBySpecId" resultType="shopCartVo">
+        SELECT
+            i.id AS itemId,
+            i.item_name AS itemName,
+            ii.url AS itemImgUrl,
+            ise.id AS specId,
+            ise.`name` AS specName,
+            ise.price_normal AS priceNormal,
+            ise.price_normal AS priceDiscount
+        FROM
+            items_spec ise
+            LEFT JOIN items i ON ise.item_id = i.id
+            LEFT JOIN items_img ii ON ise.item_id = ii.item_id
+        WHERE
+            ii.is_main = 1
+            AND ise.id IN
+            <foreach collection="itemSpecIds" separator="," open="(" close=")" item="specId">
+                #{specId}
+            </foreach>
+    </select>
+</mapper>

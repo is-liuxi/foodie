@@ -66,7 +66,7 @@
         <result column="name" property="name"/>
         <result column="type" property="type"/>
         <result column="fatherId" property="fatherId"/>
-        <collection property="subCatList" ofType="subCategoryVo">
+        <collection property="subCatList" ofType="categoryVo">
             <id column="subId" property="subId"/>
             <result column="subName" property="subName"/>
             <result column="subType" property="subType"/>
@@ -74,13 +74,13 @@
         </collection>
     </resultMap>
 
-    <resultMap id="querySixNewItemsLazy" type="newItemsVo">
+    <resultMap id="querySixNewItemsLazy" type="itemNewVo">
         <id column="rootCatId" property="rootCatId"/>
         <result column="rootCatName" property="rootCatName"/>
         <result column="slogan" property="slogan"/>
         <result column="catImage" property="catImage"/>
         <result column="bgColor" property="bgColor"/>
-        <collection property="simpleItemList" ofType="simpleItemVo">
+        <collection property="simpleItemList" ofType="itemSimpleVo">
             <id column="itemId" property="itemId"/>
             <result column="itemName" property="itemName"/>
             <result column="itemUrl" property="itemUrl"/>

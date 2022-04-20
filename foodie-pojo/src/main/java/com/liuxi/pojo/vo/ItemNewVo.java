@@ -12,12 +12,12 @@ import java.util.List;
  * @date 2022/4/18 20:48
  */
 @Data
-public class NewItemsVo {
+public class ItemNewVo {
     private Integer rootCatId;
     private String rootCatName;
     private String slogan;
     private String catImage;
     private String bgColor;
 
-    private List<SimpleItemVo> simpleItemList;
+    private List<ItemSimpleVo> simpleItemList;
 }

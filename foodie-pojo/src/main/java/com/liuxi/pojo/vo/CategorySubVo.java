@@ -10,7 +10,7 @@ import lombok.Data;
  * @date 2022/4/18 19:54
  */
 @Data
-public class SubCategoryVo {
+public class CategorySubVo {
     private Integer subId;
     private String subName;
     private String subType;

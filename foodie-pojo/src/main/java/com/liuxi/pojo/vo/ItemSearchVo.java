@@ -10,7 +10,7 @@ import lombok.Data;
  * @date 2022/4/19 21:21
  */
 @Data
-public class SearchItemsVo {
+public class ItemSearchVo {
     /**
      * 商品id
      */

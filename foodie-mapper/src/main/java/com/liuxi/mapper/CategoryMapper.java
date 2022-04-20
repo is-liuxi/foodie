@@ -3,7 +3,7 @@ package com.liuxi.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.liuxi.pojo.Category;
 import com.liuxi.pojo.vo.CategoryVo;
-import com.liuxi.pojo.vo.NewItemsVo;
+import com.liuxi.pojo.vo.ItemNewVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -37,5 +37,5 @@ public interface CategoryMapper extends BaseMapper<Category> {
      * @param map
      * @return
      */
-    List<NewItemsVo> querySixNewItemsLazy(@Param("paramsMap") Map<String, Object> map);
+    List<ItemNewVo> querySixNewItemsLazy(@Param("paramsMap") Map<String, Object> map);
 }

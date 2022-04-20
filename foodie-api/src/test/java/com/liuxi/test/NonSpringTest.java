@@ -1,7 +1,8 @@
 package com.liuxi.test;
 
-import com.liuxi.util.enums.YesOrNoEnum;
 import org.junit.Test;
+
+import java.util.Arrays;
 
 /**
  * <p>
@@ -32,5 +33,11 @@ public class NonSpringTest {
             result.append("*");
         }
         System.out.println(result);
+    }
+
+    @Test
+    public void test3() {
+        String str = "aa";
+        System.out.println(Arrays.toString(str.split(",")));
     }
 }

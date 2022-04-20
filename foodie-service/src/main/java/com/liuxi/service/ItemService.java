@@ -5,8 +5,9 @@ import com.liuxi.pojo.ItemsImg;
 import com.liuxi.pojo.ItemsParam;
 import com.liuxi.pojo.ItemsSpec;
 import com.liuxi.pojo.page.PageResult;
-import com.liuxi.pojo.vo.ItemCommentsVo;
-import com.liuxi.pojo.vo.SearchItemsVo;
+import com.liuxi.pojo.vo.ShopCartVo;
+import com.liuxi.pojo.vo.ItemCommentVo;
+import com.liuxi.pojo.vo.ItemSearchVo;
 
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,7 @@ public interface ItemService {
      * @param pageSize
      * @return
      */
-    PageResult<ItemCommentsVo> queryItemCommentPage(String itemId, Integer level, int page, int pageSize);
+    PageResult<ItemCommentVo> queryItemCommentPage(String itemId, Integer level, int page, int pageSize);
 
     /**
      * 根据商品id查询商品评论总数
@@ -81,7 +82,7 @@ public interface ItemService {
      * @param pageSize
      * @return
      */
-    PageResult<SearchItemsVo> searchByKeWords(String keywords, String sort, int page, int pageSize);
+    PageResult<ItemSearchVo> searchByKeWords(String keywords, String sort, int page, int pageSize);
 
     /**
      * 根据商品类别搜索
@@ -91,6 +92,6 @@ public interface ItemService {
      * @param pageSize
      * @return
      */
-    PageResult<SearchItemsVo> searchByCatItems(Integer catId, String sort, int page, int pageSize);
+    PageResult<ItemSearchVo> searchByCatItems(Integer catId, String sort, int page, int pageSize);
 
 }

@@ -17,5 +17,5 @@ public class CategoryVo {
     private String name;
     private String type;
     private Integer fatherId;
-    private List<SubCategoryVo> subCatList;
+    private List<CategorySubVo> subCatList;
 }

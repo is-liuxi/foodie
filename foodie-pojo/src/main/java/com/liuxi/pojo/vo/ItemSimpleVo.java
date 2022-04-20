@@ -10,7 +10,7 @@ import lombok.Data;
  * @date 2022/4/18 20:49
  */
 @Data
-public class SimpleItemVo {
+public class ItemSimpleVo {
     private String itemId;
     private String itemName;
     private String itemUrl;

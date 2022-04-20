@@ -5,8 +5,9 @@ import com.liuxi.pojo.ItemsImg;
 import com.liuxi.pojo.ItemsParam;
 import com.liuxi.pojo.ItemsSpec;
 import com.liuxi.pojo.page.PageResult;
-import com.liuxi.pojo.vo.ItemCommentsVo;
-import com.liuxi.pojo.vo.SearchItemsVo;
+import com.liuxi.pojo.vo.ShopCartVo;
+import com.liuxi.pojo.vo.ItemCommentVo;
+import com.liuxi.pojo.vo.ItemSearchVo;
 import com.liuxi.service.ItemService;
 import com.liuxi.util.common.ResultJsonResponse;
 import io.swagger.annotations.Api;
@@ -57,7 +58,7 @@ public class ItemController {
                                        @RequestParam(value = "level", required = false) Integer level,
                                        @RequestParam("page") int page,
                                        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-        PageResult<ItemCommentsVo> result = itemService.queryItemCommentPage(itemId, level, page, pageSize);
+        PageResult<ItemCommentVo> result = itemService.queryItemCommentPage(itemId, level, page, pageSize);
         return ResultJsonResponse.ok(result);
     }
 
@@ -70,10 +71,10 @@ public class ItemController {
     @GetMapping("search")
     @ApiOperation(value = "商品搜索", notes = "商品搜索")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "keywords", value = "搜索关键字", required = true),
-            @ApiImplicitParam(name = "sort", value = "显示排序【k：默认排序，c：销量排序，p：价格排序】", required = true),
-            @ApiImplicitParam(name = "page", value = "当前页码", required = true),
-            @ApiImplicitParam(name = "pageSize", value = "页面显示大小", required = true)
+            @ApiImplicitParam(name = "keywords", value = "搜索关键字", required = true, dataType = "string"),
+            @ApiImplicitParam(name = "sort", value = "显示排序【k：默认排序，c：销量排序，p：价格排序】", required = true, dataType = "string"),
+            @ApiImplicitParam(name = "page", value = "当前页码", required = true, dataType = "int"),
+            @ApiImplicitParam(name = "pageSize", value = "页面显示大小", required = true, dataType = "int")
     })
     public ResultJsonResponse search(@RequestParam("keywords") String keywords,
                                      @RequestParam(value = "sort", required = false) String sort,
@@ -82,26 +83,26 @@ public class ItemController {
         if (StringUtils.isBlank(keywords)) {
             return ResultJsonResponse.errorMsg("查询关键字不能为空");
         }
-        PageResult<SearchItemsVo> itemList = itemService.searchByKeWords(keywords, sort, page, pageSize);
+        PageResult<ItemSearchVo> itemList = itemService.searchByKeWords(keywords, sort, page, pageSize);
         return ResultJsonResponse.ok(itemList);
     }
 
     @GetMapping("catItems")
     @ApiOperation(value = "商品分类搜索", notes = "商品分类搜索")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "keywords", value = "搜索关键字", required = true),
-            @ApiImplicitParam(name = "sort", value = "显示排序【k：默认排序，c：销量排序，p：价格排序】", required = true),
-            @ApiImplicitParam(name = "page", value = "当前页码", required = true),
-            @ApiImplicitParam(name = "pageSize", value = "页面显示大小", required = true)
+            @ApiImplicitParam(name = "keywords", value = "搜索关键字", required = true, dataType = "integer"),
+            @ApiImplicitParam(name = "sort", value = "显示排序【k：默认排序，c：销量排序，p：价格排序】", required = true, dataType = "string"),
+            @ApiImplicitParam(name = "page", value = "当前页码", required = true, dataType = "int"),
+            @ApiImplicitParam(name = "pageSize", value = "页面显示大小", required = true, dataType = "int")
     })
     public ResultJsonResponse searchByCatItems(@RequestParam("catId") Integer catId,
-                                       @RequestParam(value = "sort", required = false) String sort,
-                                       @RequestParam("page") int page,
-                                       @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+                                               @RequestParam(value = "sort", required = false) String sort,
+                                               @RequestParam("page") int page,
+                                               @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         if (catId == null) {
             return ResultJsonResponse.errorMsg("分类id不能为空");
         }
-        PageResult<SearchItemsVo> itemList = itemService.searchByCatItems(catId, sort, page, pageSize);
+        PageResult<ItemSearchVo> itemList = itemService.searchByCatItems(catId, sort, page, pageSize);
         return ResultJsonResponse.ok(itemList);
     }
 }

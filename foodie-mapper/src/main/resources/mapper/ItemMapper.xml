@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.liuxi.mapper.ItemMapper">
 
-    <select id="searchItemByKeyWord" resultType="searchItemsVo">
+    <select id="searchItemByKeyWord" resultType="itemSearchVo">
         SELECT
             i.id AS itemId,
             i.item_name AS itemName,
@@ -27,7 +27,7 @@
             #{page}, #{pageSize}
     </select>
 
-    <select id="searchByCatId" resultType="searchItemsVo">
+    <select id="searchByCatId" resultType="itemSearchVo">
         SELECT
             i.id AS itemId,
             i.item_name AS itemName,

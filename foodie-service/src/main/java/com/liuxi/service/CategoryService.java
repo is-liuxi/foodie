@@ -2,7 +2,7 @@ package com.liuxi.service;
 
 import com.liuxi.pojo.Category;
 import com.liuxi.pojo.vo.CategoryVo;
-import com.liuxi.pojo.vo.NewItemsVo;
+import com.liuxi.pojo.vo.ItemNewVo;
 
 import java.util.List;
 import java.util.Map;
@@ -35,5 +35,5 @@ public interface CategoryService {
      * @param params
      * @return
      */
-    List<NewItemsVo> querySixNewItemsLazy(Map<String, Object> params);
+    List<ItemNewVo> querySixNewItemsLazy(Map<String, Object> params);
 }

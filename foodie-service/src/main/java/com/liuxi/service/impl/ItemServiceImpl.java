@@ -7,14 +7,16 @@ import com.liuxi.pojo.ItemsImg;
 import com.liuxi.pojo.ItemsParam;
 import com.liuxi.pojo.ItemsSpec;
 import com.liuxi.pojo.page.PageResult;
+import com.liuxi.pojo.vo.ShopCartVo;
 import com.liuxi.pojo.vo.ItemCommentLevelVo;
-import com.liuxi.pojo.vo.ItemCommentsVo;
-import com.liuxi.pojo.vo.SearchItemsVo;
+import com.liuxi.pojo.vo.ItemCommentVo;
+import com.liuxi.pojo.vo.ItemSearchVo;
 import com.liuxi.service.ItemService;
 import com.liuxi.util.enums.SortEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,10 +69,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public PageResult<ItemCommentsVo> queryItemCommentPage(String itemId, Integer level, int page, int pageSize) {
+    public PageResult<ItemCommentVo> queryItemCommentPage(String itemId, Integer level, int page, int pageSize) {
         // 开始记录行
         int startNum = (page - 1) * pageSize;
-        List<ItemCommentsVo> resultPage = itemCommentMapper.queryCommentsPage(itemId, level, startNum, pageSize);
+        List<ItemCommentVo> resultPage = itemCommentMapper.queryCommentsPage(itemId, level, startNum, pageSize);
         resultPage.forEach(item -> {
             String nickname = item.getNickname();
             String desensitization = desensitization(nickname);
@@ -105,7 +107,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public PageResult<SearchItemsVo> searchByKeWords(String keywords, String sort, int page, int pageSize) {
+    public PageResult<ItemSearchVo> searchByKeWords(String keywords, String sort, int page, int pageSize) {
         // 当前页
         int currentPage = (page - 1) * pageSize;
         //【k：默认排序，c：销量排序，p：价格排序】
@@ -116,7 +118,7 @@ public class ItemServiceImpl implements ItemService {
         } else {
             sort = "itemName";
         }
-        List<SearchItemsVo> searchItemList = itemMapper.searchItemByKeyWord(keywords, sort, currentPage, pageSize);
+        List<ItemSearchVo> searchItemList = itemMapper.searchItemByKeyWord(keywords, sort, currentPage, pageSize);
 
         // 查询商品数量
         LambdaQueryWrapper<Items> queryWrapper = new LambdaQueryWrapper<>();
@@ -130,10 +132,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public PageResult<SearchItemsVo> searchByCatItems(Integer catId, String sort, int page, int pageSize) {
+    public PageResult<ItemSearchVo> searchByCatItems(Integer catId, String sort, int page, int pageSize) {
         // limit 分页从零开始
         int currentPage = (page - 1) * pageSize;
-        List<SearchItemsVo> itemList = itemMapper.searchByCatId(catId, sort, currentPage, pageSize);
+        List<ItemSearchVo> itemList = itemMapper.searchByCatId(catId, sort, currentPage, pageSize);
         // 查询总条数
         long count = itemMapper.selectCount(new LambdaQueryWrapper<>(Items.class).eq(Items::getCatId, catId));
         long pageTotal = count % pageSize;

@@ -12,7 +12,7 @@ import java.util.Date;
  * @date 2022/4/19 0:29
  */
 @Data
-public class ItemCommentsVo {
+public class ItemCommentVo {
     private String userFace;
     private String nickname;
     private Integer commentLevel;

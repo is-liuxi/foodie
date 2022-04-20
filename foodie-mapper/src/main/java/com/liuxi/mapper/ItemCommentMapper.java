@@ -3,7 +3,7 @@ package com.liuxi.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.liuxi.pojo.ItemsComments;
 import com.liuxi.pojo.vo.ItemCommentLevelVo;
-import com.liuxi.pojo.vo.ItemCommentsVo;
+import com.liuxi.pojo.vo.ItemCommentVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -32,8 +32,8 @@ public interface ItemCommentMapper extends BaseMapper<ItemsComments> {
      * @param pageSize
      * @return
      */
-    List<ItemCommentsVo> queryCommentsPage(@Param("itemId") String itemId, @Param("commentLevel") Integer commentLevel,
-                                           @Param("page") long page, @Param("pageSize") long pageSize);
+    List<ItemCommentVo> queryCommentsPage(@Param("itemId") String itemId, @Param("commentLevel") Integer commentLevel,
+                                          @Param("page") long page, @Param("pageSize") long pageSize);
 
     /**
      * 根据商品id查询商品评论总数

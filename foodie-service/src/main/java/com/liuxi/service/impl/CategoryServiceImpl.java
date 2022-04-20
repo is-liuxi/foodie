@@ -3,7 +3,7 @@ package com.liuxi.service.impl;
 import com.liuxi.mapper.CategoryMapper;
 import com.liuxi.pojo.Category;
 import com.liuxi.pojo.vo.CategoryVo;
-import com.liuxi.pojo.vo.NewItemsVo;
+import com.liuxi.pojo.vo.ItemNewVo;
 import com.liuxi.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     @Override
-    public List<NewItemsVo> querySixNewItemsLazy(Map<String, Object> params) {
+    public List<ItemNewVo> querySixNewItemsLazy(Map<String, Object> params) {
         return categoryMapper.querySixNewItemsLazy(params);
     }
 }

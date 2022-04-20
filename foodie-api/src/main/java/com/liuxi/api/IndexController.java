@@ -3,7 +3,7 @@ package com.liuxi.api;
 import com.liuxi.pojo.Carousel;
 import com.liuxi.pojo.Category;
 import com.liuxi.pojo.vo.CategoryVo;
-import com.liuxi.pojo.vo.NewItemsVo;
+import com.liuxi.pojo.vo.ItemNewVo;
 import com.liuxi.service.CarouselService;
 import com.liuxi.service.CategoryService;
 import com.liuxi.util.common.ResultJsonResponse;
@@ -66,7 +66,7 @@ public class IndexController {
                                           @PathVariable("rootId") Integer rootId) {
         Map<String, Object> map = new HashMap<>(2);
         map.put("rootCartId", rootId);
-        List<NewItemsVo> itemList = categoryService.querySixNewItemsLazy(map);
+        List<ItemNewVo> itemList = categoryService.querySixNewItemsLazy(map);
         return ResultJsonResponse.ok(itemList);
     }
 }
