@@ -22,13 +22,14 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         // 允许所有路径、所有来源、所有请求方法
         registry.addMapping("/**")
-                // 前端地址
-                .allowedOrigins("http://localhost:8080")
+                // 前端地址 http://localhost:8080
+                .allowedOrigins("*")
                 // 请求的方式
                 .allowedMethods("*")
                 // 请求头信息
                 .allowedHeaders("*")
                 // 是否可以携带数据
-                .allowCredentials(true);
+                .allowCredentials(true)
+                .exposedHeaders("simple");
     }
 }

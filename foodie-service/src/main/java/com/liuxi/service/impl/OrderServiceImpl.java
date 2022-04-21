@@ -1,10 +1,12 @@
 package com.liuxi.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.liuxi.mapper.*;
 import com.liuxi.pojo.OrderItems;
 import com.liuxi.pojo.OrderStatus;
 import com.liuxi.pojo.Orders;
 import com.liuxi.pojo.UserAddress;
+import com.liuxi.pojo.vo.OrderVo;
 import com.liuxi.pojo.vo.ShopCartCreateOrderVo;
 import com.liuxi.pojo.vo.ShopCartVo;
 import com.liuxi.service.OrderService;
@@ -156,5 +158,27 @@ public class OrderServiceImpl implements OrderService {
         order.setIsDelete(YesOrNoEnum.NO.type);
         order.setCreatedTime(date);
         order.setUpdatedTime(date);
+    }
+
+    @Override
+    public OrderVo queryOrderByIdAndUserId(String userId, String orderId) {
+        OrderVo order = orderMapper.queryOrderByIdAndUserId(userId, orderId);
+        order.setQrCodeUrl("http://www.baidu.com");
+        return order;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Override
+    public void updateOrderStatus(String orderId) {
+        OrderStatus orderStatus = new OrderStatus();
+        orderStatus.setOrderId(orderId);
+        orderStatus.setOrderStatus(OrderStatusEnum.PAID.type);
+        orderStatus.setPayTime(new Date());
+        orderStatusMapper.updateById(orderStatus);
+    }
+
+    @Override
+    public OrderStatus getPaidOrderInfo(String orderId) {
+        return orderStatusMapper.selectById(orderId);
     }
 }
