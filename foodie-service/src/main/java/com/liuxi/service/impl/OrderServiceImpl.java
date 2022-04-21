@@ -1,11 +1,12 @@
 package com.liuxi.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.liuxi.mapper.*;
 import com.liuxi.pojo.OrderItems;
 import com.liuxi.pojo.OrderStatus;
 import com.liuxi.pojo.Orders;
 import com.liuxi.pojo.UserAddress;
+import com.liuxi.pojo.page.PageResult;
+import com.liuxi.pojo.vo.OrderStatusVo;
 import com.liuxi.pojo.vo.OrderVo;
 import com.liuxi.pojo.vo.ShopCartCreateOrderVo;
 import com.liuxi.pojo.vo.ShopCartVo;
@@ -180,5 +181,21 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderStatus getPaidOrderInfo(String orderId) {
         return orderStatusMapper.selectById(orderId);
+    }
+
+    @Override
+    public OrderStatusVo queryOrderStatusCounts(String userId) {
+        return orderStatusMapper.queryOrderStatusCounts(userId);
+    }
+
+    @Override
+    public PageResult<OrderStatus> queryOrderTrend(String userId, int page, int pageSize) {
+        int currentPage = (page - 1) * pageSize;
+        List<OrderStatus> orderStatusList = orderStatusMapper.queryOrderTrend(userId, currentPage, pageSize);
+        // 总页数
+        int records = orderStatusMapper.queryOrderTrendCount(userId);
+        int total = records % pageSize;
+        total = total == 0 ? records / pageSize : (records / pageSize) + 1;
+        return new PageResult<>(page, total, records, orderStatusList);
     }
 }

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liuxi.mapper.OrderStatusMapper">
+
+    <select id="queryOrderStatusCounts" resultType="orderStatusVo">
+        SELECT
+            count( CASE os.order_status WHEN 10 THEN os.order_status END ) AS waitPayCounts,
+            count( CASE os.order_status WHEN 20 THEN os.order_status END ) AS waitDeliverCounts,
+            count( CASE os.order_status WHEN 30 THEN os.order_status END ) AS waitReceiveCounts,
+            count( CASE os.order_status WHEN 40 THEN os.order_status END ) AS waitCommentCounts
+        FROM
+            orders o
+            LEFT JOIN `order_status` os ON o.id = os.order_id
+        WHERE
+            user_id = #{userId}
+        GROUP BY
+            user_id
+    </select>
+
+    <select id="queryOrderTrend" resultType="orderStatus">
+        SELECT
+            o.id AS orderId,
+            os.order_status as orderStatus,
+            os.pay_time AS payTime,
+            os.deliver_time AS deliverTime,
+            os.success_time AS successTime
+        FROM
+            orders o
+            LEFT JOIN `order_status` os ON o.id = os.order_id
+        WHERE
+            o.user_id = #{userId}
+            AND os.order_status BETWEEN 20
+            AND 40
+        ORDER BY
+            pay_time,
+            deliver_time,
+            success_time ASC
+        LIMIT
+            #{page}, #{pageSize}
+    </select>
+
+    <select id="queryOrderTrendCount" resultType="int">
+        SELECT
+            count(*)
+        FROM
+            orders o
+            LEFT JOIN `order_status` os ON o.id = os.order_id
+        WHERE
+            o.user_id = #{userId}
+            AND os.order_status BETWEEN 20
+            AND 40
+    </select>
+</mapper>

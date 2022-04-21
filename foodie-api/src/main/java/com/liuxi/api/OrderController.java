@@ -1,6 +1,8 @@
 package com.liuxi.api;
 
 import com.liuxi.pojo.OrderStatus;
+import com.liuxi.pojo.page.PageResult;
+import com.liuxi.pojo.vo.OrderStatusVo;
 import com.liuxi.pojo.vo.ShopCartCreateOrderVo;
 import com.liuxi.service.OrderService;
 import com.liuxi.util.ConstantUtils;
@@ -52,5 +54,21 @@ public class OrderController {
     public ResultJsonResponse updateOrderStatus(@PathVariable("orderId") String orderId) {
         orderService.updateOrderStatus(orderId);
         return ResultJsonResponse.ok();
+    }
+
+    @GetMapping("statusCounts/{userId}")
+    @ApiOperation(value = "查询订单各种状态", notes = "查询订单各种状态")
+    public ResultJsonResponse queryOrderStatusCounts(@PathVariable("userId") String userId) {
+        OrderStatusVo orderStatus = orderService.queryOrderStatusCounts(userId);
+        return ResultJsonResponse.ok(orderStatus);
+    }
+
+    @GetMapping("trend")
+    @ApiOperation(value = "查看所有订单", notes = "查看所有订单")
+    public ResultJsonResponse trend(@RequestParam("userId") String userId,
+                                    @RequestParam("page") int page,
+                                    @RequestParam("pageSize") int pageSize) {
+        PageResult<OrderStatus> pageResult = orderService.queryOrderTrend(userId, page, pageSize);
+        return ResultJsonResponse.ok(pageResult);
     }
 }

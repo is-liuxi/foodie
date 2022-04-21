@@ -1,8 +1,12 @@
 package com.liuxi.service;
 
 import com.liuxi.pojo.OrderStatus;
+import com.liuxi.pojo.page.PageResult;
+import com.liuxi.pojo.vo.OrderStatusVo;
 import com.liuxi.pojo.vo.OrderVo;
 import com.liuxi.pojo.vo.ShopCartCreateOrderVo;
+
+import java.util.List;
 
 /**
  * <p>
@@ -40,4 +44,20 @@ public interface OrderService {
      * @return
      */
     OrderStatus getPaidOrderInfo(String orderId);
+
+    /**
+     * 查询各种订单状态个数
+     * @param userId
+     * @return
+     */
+    OrderStatusVo queryOrderStatusCounts(String userId);
+
+    /**
+     * 查询订单趋势，未支付与交易关闭的不显示
+     * @param userId
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    PageResult<OrderStatus> queryOrderTrend(String userId, int page, int pageSize);
 }
