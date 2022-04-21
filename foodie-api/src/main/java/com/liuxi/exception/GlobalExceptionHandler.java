@@ -25,4 +25,13 @@ public class GlobalExceptionHandler {
         map.put("errCode", 400);
         return map;
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public Map<String, Object> runtimeException(RuntimeException ex) {
+        // 大于 负载因子*0.75 开始扩容
+        Map<String, Object> map = new HashMap<>(3);
+        map.put("errMsg", ex.getMessage());
+        map.put("errCode", 400);
+        return map;
+    }
 }

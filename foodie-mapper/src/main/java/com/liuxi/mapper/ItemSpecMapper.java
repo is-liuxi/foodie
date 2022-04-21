@@ -15,10 +15,11 @@ import org.apache.ibatis.annotations.Update;
 public interface ItemSpecMapper extends BaseMapper<ItemsSpec> {
 
     /**
-     * 减库存
+     * 减库存。使用乐观锁
      * @param byCount
      * @param specId
+     * @return
      */
-    @Update("UPDATE items_spec SET stock = stock - #{buyCount} WHERE id = #{specId}")
-    void decrItemStock(@Param("buyCount") int byCount, @Param("specId") String specId);
+    @Update("UPDATE items_spec SET stock = stock - #{buyCount} WHERE id = #{specId} AND stock >= #{buyCount}")
+    int decrItemStock(@Param("buyCount") int byCount, @Param("specId") String specId);
 }

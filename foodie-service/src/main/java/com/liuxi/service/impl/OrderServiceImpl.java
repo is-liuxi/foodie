@@ -50,18 +50,10 @@ public class OrderServiceImpl implements OrderService {
         List<String> specIdList = Arrays.asList(specIds);
         List<ShopCartVo> itemList = shopCartMapper.selectCartsBySpecId(specIdList);
         // 检查 spu 库存
-        StringBuilder sb = new StringBuilder();
-        sb.append("订单未能提交成功：您所购买的【\n\t");
-        boolean flag = false;
         for (ShopCartVo item : itemList) {
             if (item.getSpecStock() <= 0) {
-                flag = true;
-                sb.append(item.getItemName()).append(" 库存不足\n\t");
+                throw new RuntimeException("订单未能提交成功：您所购买的\n\t【" + item.getItemName() + " 】\n库存不足");
             }
-        }
-        sb.append("】");
-        if (flag) {
-            return sb.toString();
         }
 
         Orders order = new Orders();
@@ -73,18 +65,19 @@ public class OrderServiceImpl implements OrderService {
         int priceDiscount = itemList.stream().mapToInt(ShopCartVo::getPriceDiscount).reduce(Integer::sum).orElse(0);
         // 实际支付价格
         int priceNormal = itemList.stream().mapToInt(ShopCartVo::getPriceNormal).reduce(Integer::sum).orElse(0);
-        order.setRealPayAmount(priceDiscount);
-        order.setTotalAmount(priceDiscount + priceNormal);
+        order.setRealPayAmount(priceNormal);
+        order.setTotalAmount(priceDiscount);
         // 保存到数据库中
         orderMapper.insert(order);
 
         // 拿到新增的订单 id
         String orderId = order.getId();
-        // 订单、商品关联表数据新增
+        // 订单、商品关联表数据新增，并检查库存
         this.saveOrderItemData(itemList, orderId);
         // 交易状态
         this.saveOrderStatus(orderId, date);
-        return null;
+        // TODO 删除购物车中商品
+        return orderId;
     }
 
     /**
@@ -109,6 +102,10 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void saveOrderItemData(List<ShopCartVo> itemList, String orderId) {
         for (ShopCartVo item : itemList) {
+            int buyCount = 1;
+            if (item.getSpecStock() - buyCount <= 0) {
+                throw new RuntimeException("订单未能提交成功：您所购买的\n\t【" + item.getItemName() + " 】\n库存不足");
+            }
             OrderItems orderItems = new OrderItems();
             orderItems.setOrderId(orderId);
             orderItems.setItemId(item.getItemId());
@@ -120,8 +117,12 @@ public class OrderServiceImpl implements OrderService {
             // TODO 价格、数量
             orderItems.setPrice(item.getPriceDiscount());
             orderItemMapper.insert(orderItems);
-            // 减去库存
-            itemSpecMapper.decrItemStock(1, item.getItemId());
+            // 减去库存。使用乐观锁
+            int checkStock = itemSpecMapper.decrItemStock(buyCount, item.getSpecId());
+            if (checkStock == 0) {
+                // 库存不足
+                throw new RuntimeException("库存不足：" + item.getItemName());
+            }
         }
     }
 
