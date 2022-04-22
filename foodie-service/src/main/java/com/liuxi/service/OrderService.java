@@ -2,11 +2,10 @@ package com.liuxi.service;
 
 import com.liuxi.pojo.OrderStatus;
 import com.liuxi.pojo.page.PageResult;
+import com.liuxi.pojo.vo.CenterOrderVo;
 import com.liuxi.pojo.vo.OrderStatusVo;
 import com.liuxi.pojo.vo.OrderVo;
 import com.liuxi.pojo.vo.ShopCartCreateOrderVo;
-
-import java.util.List;
 
 /**
  * <p>
@@ -60,4 +59,14 @@ public interface OrderService {
      * @return
      */
     PageResult<OrderStatus> queryOrderTrend(String userId, int page, int pageSize);
+
+    /**
+     * 查询个人所有订单
+     * @param userId
+     * @param status
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    PageResult<CenterOrderVo> queryOrderByUserIdAndOrderStatus(String userId, Integer status, int page, int pageSize);
 }

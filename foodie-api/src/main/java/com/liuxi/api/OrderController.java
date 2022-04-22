@@ -2,6 +2,7 @@ package com.liuxi.api;
 
 import com.liuxi.pojo.OrderStatus;
 import com.liuxi.pojo.page.PageResult;
+import com.liuxi.pojo.vo.CenterOrderVo;
 import com.liuxi.pojo.vo.OrderStatusVo;
 import com.liuxi.pojo.vo.ShopCartCreateOrderVo;
 import com.liuxi.service.OrderService;
@@ -9,6 +10,7 @@ import com.liuxi.util.ConstantUtils;
 import com.liuxi.util.common.ResultJsonResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,11 +66,24 @@ public class OrderController {
     }
 
     @GetMapping("trend")
-    @ApiOperation(value = "查看所有订单", notes = "查看所有订单")
+    @ApiOperation(value = "查看成功的订单", notes = "查看已付款、待发货、已完成订单")
     public ResultJsonResponse trend(@RequestParam("userId") String userId,
                                     @RequestParam("page") int page,
                                     @RequestParam("pageSize") int pageSize) {
         PageResult<OrderStatus> pageResult = orderService.queryOrderTrend(userId, page, pageSize);
         return ResultJsonResponse.ok(pageResult);
+    }
+
+    @GetMapping("queryOrderByUserIdAndOrderStatus")
+    @ApiOperation(value = "查询个人所有订单", notes = "查询个人所有订单")
+    public ResultJsonResponse queryOrderByUserIdAndOrderStatus(@RequestParam("userId") String userId,
+                                                               @RequestParam(value = "orderStatus", required = false) Integer status,
+                                                               @RequestParam("page") int page,
+                                                               @RequestParam("pageSize") int pageSize) {
+        if (StringUtils.isEmpty(userId)) {
+            return ResultJsonResponse.errorMsg("用户未登录");
+        }
+        PageResult<CenterOrderVo> resultList = orderService.queryOrderByUserIdAndOrderStatus(userId, status, page, pageSize);
+        return ResultJsonResponse.ok(resultList);
     }
 }

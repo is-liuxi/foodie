@@ -7,6 +7,10 @@ import com.liuxi.config.AliYunConfig;
 import com.liuxi.pojo.User;
 import com.liuxi.pojo.bo.UserRegistryBo;
 import com.liuxi.pojo.bo.UserUpdateBo;
+import com.liuxi.pojo.page.PageResult;
+import com.liuxi.pojo.vo.ItemCommentVo;
+import com.liuxi.service.ItemService;
+import com.liuxi.service.OrderService;
 import com.liuxi.service.UserService;
 import com.liuxi.util.FileUtils;
 import com.liuxi.util.common.ResultJsonResponse;
@@ -46,6 +50,8 @@ public class PassportController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private ItemService itemService;
     @Autowired
     private OSS oss;
     @Autowired
@@ -117,7 +123,9 @@ public class PassportController {
 
     @PutMapping("updateUserInfo/{userId}")
     @ApiOperation(value = "修改用户信息", notes = "修改用户信息")
-    public ResultJsonResponse updateUserInfo(@PathVariable("userId") String userId, @RequestBody @Valid UserUpdateBo user, BindingResult bindingResult) {
+    public ResultJsonResponse updateUserInfo(@PathVariable("userId") String userId,
+                                             @RequestBody @Valid UserUpdateBo user,
+                                             BindingResult bindingResult) {
         // 前端传入字段不符合校验判断
         if (bindingResult.hasErrors()) {
             List<FieldError> fieldErrors = bindingResult.getFieldErrors();
@@ -152,6 +160,14 @@ public class PassportController {
         cookie.setPath("/");
         response.addCookie(cookie);
         return ResultJsonResponse.ok();
+    }
+
+    @GetMapping("queryCommentByUserId")
+    public ResultJsonResponse queryCommentByUserId(@RequestParam("userId") String userId,
+                                                   @RequestParam("page") int page,
+                                                   @RequestParam("pageSize") int pageSize) {
+        PageResult<ItemCommentVo> pageResult = itemService.queryCommentByUserId(userId, page, pageSize);
+        return ResultJsonResponse.ok(pageResult);
     }
 
     /**

@@ -18,7 +18,7 @@
         WHERE
 	        ic.item_id = #{itemId}
 	        <if test="commentLevel != null and commentLevel != ''">
-                , ic.comment_level = commentLevel
+                AND ic.comment_level = #{commentLevel}
             </if>
         LIMIT #{page}, #{pageSize}
     </select>
@@ -32,7 +32,7 @@
         WHERE
             ic.item_id = #{itemId}
             <if test="commentLevel">
-                , ic.comment_level = commentLevel
+                AND ic.comment_level = #{commentLevel}
             </if>
     </select>
 
@@ -50,5 +50,34 @@
             item_id = #{itemId}
         GROUP BY
             comment_level
+    </select>
+
+    <select id="queryItemCommentByUserId" resultType="itemCommentVo">
+        SELECT
+            ic.item_id AS itemId,
+            ic.item_name AS itemName,
+            ic.content AS content,
+            ic.sepc_name AS specName,
+            ic.created_time AS createdTime,
+            ii.url AS itemImg
+        FROM
+            items_comments ic
+            LEFT JOIN items_img ii ON ic.item_id = ii.item_id
+        WHERE
+            ic.user_id = #{userId}
+            AND ii.is_main = 1
+        ORDER BY ic.created_time DESC
+        LIMIT #{page}, #{pageSize}
+    </select>
+
+    <select id="queryItemCommentByUserIdCount" resultType="int">
+        SELECT
+            count(*)
+        FROM
+            items_comments ic
+            LEFT JOIN items_img ii ON ic.item_id = ii.item_id
+        WHERE
+            ic.user_id = #{userId}
+            AND ii.is_main = 1
     </select>
 </mapper>

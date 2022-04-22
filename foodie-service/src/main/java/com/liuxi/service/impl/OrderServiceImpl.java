@@ -6,10 +6,7 @@ import com.liuxi.pojo.OrderStatus;
 import com.liuxi.pojo.Orders;
 import com.liuxi.pojo.UserAddress;
 import com.liuxi.pojo.page.PageResult;
-import com.liuxi.pojo.vo.OrderStatusVo;
-import com.liuxi.pojo.vo.OrderVo;
-import com.liuxi.pojo.vo.ShopCartCreateOrderVo;
-import com.liuxi.pojo.vo.ShopCartVo;
+import com.liuxi.pojo.vo.*;
 import com.liuxi.service.OrderService;
 import com.liuxi.util.enums.OrderStatusEnum;
 import com.liuxi.util.enums.YesOrNoEnum;
@@ -197,5 +194,17 @@ public class OrderServiceImpl implements OrderService {
         int total = records % pageSize;
         total = total == 0 ? records / pageSize : (records / pageSize) + 1;
         return new PageResult<>(page, total, records, orderStatusList);
+    }
+
+    @Override
+    public PageResult<CenterOrderVo> queryOrderByUserIdAndOrderStatus(String userId, Integer status, int page, int pageSize) {
+        int currentPage = (page - 1) * pageSize;
+        List<CenterOrderVo> orderList = orderMapper.queryOrderByUserIdAndOrderStatus(userId, status, currentPage, pageSize);
+        // 总记录
+        int records = orderMapper.queryOrderByUserIdAndOrderStatusCount(userId, status);
+        // 总页数
+        int total = records % pageSize;
+        total = total == 0 ? records / pageSize : (records / pageSize) + 1;
+        return new PageResult<>(page, total, records, orderList);
     }
 }

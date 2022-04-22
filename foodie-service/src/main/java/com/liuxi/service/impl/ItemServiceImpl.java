@@ -7,7 +7,6 @@ import com.liuxi.pojo.ItemsImg;
 import com.liuxi.pojo.ItemsParam;
 import com.liuxi.pojo.ItemsSpec;
 import com.liuxi.pojo.page.PageResult;
-import com.liuxi.pojo.vo.ShopCartVo;
 import com.liuxi.pojo.vo.ItemCommentLevelVo;
 import com.liuxi.pojo.vo.ItemCommentVo;
 import com.liuxi.pojo.vo.ItemSearchVo;
@@ -16,7 +15,6 @@ import com.liuxi.util.enums.SortEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +73,7 @@ public class ItemServiceImpl implements ItemService {
         List<ItemCommentVo> resultPage = itemCommentMapper.queryCommentsPage(itemId, level, startNum, pageSize);
         resultPage.forEach(item -> {
             String nickname = item.getNickname();
+            // 昵称脱敏
             String desensitization = desensitization(nickname);
             item.setNickname(desensitization);
         });
@@ -141,6 +140,16 @@ public class ItemServiceImpl implements ItemService {
         long pageTotal = count % pageSize;
         pageTotal = (pageTotal == 0) ? (count / pageSize) : (count / pageSize) + 1;
         return new PageResult<>(page, pageTotal, count, itemList);
+    }
+
+    @Override
+    public PageResult<ItemCommentVo> queryCommentByUserId(String userId, int page, int pageSize) {
+        int currentPage = (page - 1) * pageSize;
+        List<ItemCommentVo> itemCommentList = itemCommentMapper.queryItemCommentByUserId(userId, currentPage, pageSize);
+        int records = itemCommentMapper.queryItemCommentByUserIdCount(userId);
+        int total = records % pageSize;
+        total = total == 0 ? records / pageSize : (records / pageSize) + 1;
+        return new PageResult<>(page, total, records, itemCommentList);
     }
 
     /**

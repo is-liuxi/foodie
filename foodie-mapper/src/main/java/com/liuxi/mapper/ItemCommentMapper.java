@@ -42,4 +42,20 @@ public interface ItemCommentMapper extends BaseMapper<ItemsComments> {
      * @return
      */
     long queryCommentsPageCount(@Param("itemId") String itemId, @Param("commentLevel") Integer commentLevel);
+
+    /**
+     * 查询用户所有商品评价
+     * @param userId
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    List<ItemCommentVo> queryItemCommentByUserId(@Param("userId") String userId, @Param("page") long page, @Param("pageSize") long pageSize);
+
+    /**
+     * 用户评价数量
+     * @param userId
+     * @return
+     */
+    int queryItemCommentByUserIdCount(@Param("userId") String userId);
 }
