@@ -1,4 +1,4 @@
-package com.liuxi.pojo.vo;
+package com.liuxi.pojo.bo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,7 +15,7 @@ import java.io.Serializable;
  */
 @Data
 @ApiModel(value = "用户对象BO", description = "从客户端传入的对象")
-public class UserVo implements Serializable {
+public class UserRegistryBo implements Serializable {
     /**
      * 用户名
      */

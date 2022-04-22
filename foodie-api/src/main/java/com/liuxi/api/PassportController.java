@@ -1,10 +1,14 @@
 package com.liuxi.api;
 
+import com.aliyun.oss.OSS;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.liuxi.config.AliYunConfig;
 import com.liuxi.pojo.User;
-import com.liuxi.pojo.vo.UserVo;
+import com.liuxi.pojo.bo.UserRegistryBo;
+import com.liuxi.pojo.bo.UserUpdateBo;
 import com.liuxi.service.UserService;
+import com.liuxi.util.FileUtils;
 import com.liuxi.util.common.ResultJsonResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -12,13 +16,21 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -34,6 +46,10 @@ public class PassportController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private OSS oss;
+    @Autowired
+    private AliYunConfig aliYunConfig;
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -50,7 +66,7 @@ public class PassportController {
 
     @PostMapping("register")
     @ApiOperation(value = "注册用户", notes = "注册用户信息")
-    public ResultJsonResponse createUser(@RequestBody UserVo userBo, HttpServletResponse response) {
+    public ResultJsonResponse createUser(@RequestBody UserRegistryBo userBo, HttpServletResponse response) {
         if (userBo == null || StringUtils.isBlank(userBo.getPassword()) || StringUtils.isBlank(userBo.getConfirmPassword())
                 || StringUtils.isBlank(userBo.getUsername())) {
             return ResultJsonResponse.errorMsg("用户信息不能为空");
@@ -77,7 +93,7 @@ public class PassportController {
             @ApiImplicitParam(name = "username", required = true, dataType = "string"),
             @ApiImplicitParam(name = "password", required = true, dataType = "string")
     })
-    public ResultJsonResponse login(@RequestBody UserVo userBo, HttpServletResponse response) {
+    public ResultJsonResponse login(@RequestBody UserRegistryBo userBo, HttpServletResponse response) {
         if (userBo == null || StringUtils.isBlank(userBo.getPassword()) || StringUtils.isBlank(userBo.getUsername())) {
             return ResultJsonResponse.errorMsg("用户信息不能为空");
         }
@@ -87,6 +103,46 @@ public class PassportController {
         }
         setCookieVal(response, user);
         return ResultJsonResponse.ok(user);
+    }
+
+    @GetMapping("userInfo/{userId}")
+    @ApiOperation(value = "查询用户信息", notes = "查询用户个人信息")
+    public ResultJsonResponse queryUserInfo(@PathVariable("userId") String userId) {
+        if (StringUtils.isBlank(userId)) {
+            return ResultJsonResponse.errorMsg("用户未登录");
+        }
+        User user = userService.queryUserInfo(userId);
+        return ResultJsonResponse.ok(user);
+    }
+
+    @PutMapping("updateUserInfo/{userId}")
+    @ApiOperation(value = "修改用户信息", notes = "修改用户信息")
+    public ResultJsonResponse updateUserInfo(@PathVariable("userId") String userId, @RequestBody @Valid UserUpdateBo user, BindingResult bindingResult) {
+        // 前端传入字段不符合校验判断
+        if (bindingResult.hasErrors()) {
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+            List<String> errorsList = fieldErrors.stream().map(FieldError::getDefaultMessage).collect(Collectors.toList());
+            return ResultJsonResponse.errorMap(errorsList);
+        }
+        String resultUserId = userService.updateUserInfo(userId, user);
+        return ResultJsonResponse.ok(resultUserId);
+    }
+
+    @PostMapping("uploadFace")
+    @ApiOperation(value = "头像上传", notes = "头像上传")
+    public ResultJsonResponse uploadFace(@RequestParam("file") MultipartFile multipartFile,
+                                         @RequestParam("userId") String userId) {
+        try {
+            InputStream is = multipartFile.getInputStream();
+            String fileExt = StringUtils.substringAfter(multipartFile.getOriginalFilename(), ".");
+            String filePath = FileUtils.setFilePath(fileExt);
+            oss.putObject(aliYunConfig.getBucket(), filePath, is);
+            userService.updateUserFaceImg(userId, aliYunConfig.getUrlFix() + filePath);
+            return ResultJsonResponse.ok(aliYunConfig.getUrlFix() + filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResultJsonResponse.errorMsg("图片上传失败");
+        }
     }
 
     @PostMapping("logout")

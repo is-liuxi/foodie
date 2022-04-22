@@ -2,12 +2,14 @@ package com.liuxi.service.impl;
 
 import com.liuxi.mapper.UserMapper;
 import com.liuxi.pojo.User;
-import com.liuxi.pojo.vo.UserVo;
+import com.liuxi.pojo.bo.UserRegistryBo;
+import com.liuxi.pojo.bo.UserUpdateBo;
 import com.liuxi.service.UserService;
 import com.liuxi.util.common.DateUtils;
 import com.liuxi.util.common.MD5Utils;
 import com.liuxi.util.enums.SexEnum;
 import com.liuxi.util.idwork.Sid;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -42,7 +44,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @Override
-    public User createUser(UserVo userBo) {
+    public User createUser(UserRegistryBo userBo) {
         User user = new User();
         // 设置全局主键
         user.setId(Sid.nextShort());
@@ -66,7 +68,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User login(UserVo userBo) {
+    public User login(UserRegistryBo userBo) {
         User user = new User();
         user.setUsername(userBo.getUsername());
         try {
@@ -75,5 +77,31 @@ public class UserServiceImpl implements UserService {
             e.printStackTrace();
         }
         return userMapper.login(user);
+    }
+
+    @Override
+    public User queryUserInfo(String userId) {
+        User user = userMapper.selectById(userId);
+        user.setPassword(null);
+        return user;
+    }
+
+    @Override
+    public String updateUserInfo(String userId, UserUpdateBo userBo) {
+        User user = new User();
+        BeanUtils.copyProperties(userBo, user);
+        user.setId(userId);
+        user.setUpdatedTime(new Date());
+        userMapper.updateById(user);
+        return userId;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Override
+    public void updateUserFaceImg(String userId, String faceUrl) {
+        User user = new User();
+        user.setId(userId);
+        user.setFace(faceUrl);
+        userMapper.updateById(user);
     }
 }

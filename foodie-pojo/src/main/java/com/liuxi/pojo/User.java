@@ -46,7 +46,6 @@ public class User implements Serializable {
      * 真实姓名
      */
     @TableField(value = "realname")
-    @JsonIgnore
     private String realName;
 
     /**
