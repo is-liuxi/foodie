@@ -25,6 +25,10 @@ spring:
       max-lifetime: 1800000
       # 连接时测试
       connection-test-query: SELECT 1
+  servlet:
+    multipart:
+      max-file-size: 500KB
+      max-request-size: 500KB
 #############################################
 mybatis-plus:
   type-aliases-package: com.liuxi.pojo

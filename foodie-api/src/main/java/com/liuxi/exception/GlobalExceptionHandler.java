@@ -1,8 +1,10 @@
 package com.liuxi.exception;
 
+import com.liuxi.util.common.ResultJsonResponse;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,5 +35,10 @@ public class GlobalExceptionHandler {
         map.put("errMsg", ex.getMessage());
         map.put("errCode", 400);
         return map;
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResultJsonResponse uploadFileException(MaxUploadSizeExceededException ex) {
+        return ResultJsonResponse.errorMsg(ex.getMessage());
     }
 }

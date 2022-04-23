@@ -2,6 +2,7 @@ package com.liuxi.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -13,6 +14,19 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+    /**
+     * 静态资源映射
+     * @param registry
+     */
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**")
+                // SWAGGER-UI 映射，设置其它的会被覆盖
+                .addResourceLocations("classpath:/META-INF/resources/")
+                // 文件目录映射
+                .addResourceLocations("file:\\E:\\images\\");
+    }
 
     /**
      * 跨域设置
