@@ -102,4 +102,10 @@ public interface OrderService {
      * @param itemsComments
      */
     void publishComments(String userId, String orderId, List<ItemsComments> itemsComments);
+
+    /**
+     * 删除未支付的订单
+     * @param orderId
+     */
+    void deleteOrderById(String orderId);
 }

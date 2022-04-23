@@ -99,4 +99,11 @@ public class OrderController {
         orderService.confirmReceive(userId, orderId);
         return ResultJsonResponse.ok();
     }
+
+    @DeleteMapping("deleteOrderById/{id}")
+    @ApiOperation(value = "删除订单", notes = "逻辑删除未支付的订单")
+    public ResultJsonResponse deleteOrderById(@PathVariable("id") String orderId) {
+        orderService.deleteOrderById(orderId);
+        return ResultJsonResponse.ok();
+    }
 }

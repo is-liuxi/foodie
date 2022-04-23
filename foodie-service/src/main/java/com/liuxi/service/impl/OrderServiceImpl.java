@@ -13,9 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -257,5 +255,14 @@ public class OrderServiceImpl implements OrderService {
             itemsComment.setUpdatedTime(date);
             itemCommentMapper.insert(itemsComment);
         }
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Override
+    public void deleteOrderById(String orderId) {
+        Orders order = new Orders();
+        order.setId(orderId);
+        order.setIsDelete(YesOrNoEnum.YES.type);
+        orderMapper.updateById(order);
     }
 }
