@@ -38,18 +38,16 @@
 
     <select id="queryCommentLevel" resultType="com.liuxi.pojo.vo.ItemCommentLevelVo">
         SELECT
-            count(*) AS commentLevelTotal,
-            ( CASE comment_level
-                WHEN 1 THEN "goodCounts"
-                WHEN 2 THEN "normalCounts"
-                WHEN 3 THEN "badCounts"
-            END ) AS commentLevel
+            count(*) AS totalCounts,
+            sum(( CASE comment_level WHEN 1 THEN 1 ELSE 0 END )) AS goodCounts,
+            sum(( CASE comment_level WHEN 2 THEN 1 ELSE 0 END )) AS normalCounts,
+            sum(( CASE comment_level WHEN 3 THEN 1 ELSE 0 END )) AS badCounts
         FROM
             items_comments
         WHERE
             item_id = #{itemId}
         GROUP BY
-            comment_level
+            item_id
     </select>
 
     <select id="queryItemCommentByUserId" resultType="itemCommentVo">

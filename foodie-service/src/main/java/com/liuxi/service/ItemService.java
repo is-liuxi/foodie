@@ -2,6 +2,7 @@ package com.liuxi.service;
 
 import com.liuxi.pojo.*;
 import com.liuxi.pojo.page.PageResult;
+import com.liuxi.pojo.vo.ItemCommentLevelVo;
 import com.liuxi.pojo.vo.ItemCommentVo;
 import com.liuxi.pojo.vo.ItemSearchVo;
 
@@ -68,7 +69,7 @@ public interface ItemService {
      * @param itemId
      * @return
      */
-    Map<String, Integer> queryCommentLevel(String itemId);
+    ItemCommentLevelVo queryCommentLevel(String itemId);
 
     /**
      * 商品搜索

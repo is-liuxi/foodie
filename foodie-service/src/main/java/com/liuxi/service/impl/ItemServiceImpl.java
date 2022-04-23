@@ -15,9 +15,7 @@ import com.liuxi.util.enums.SortEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -91,18 +89,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Map<String, Integer> queryCommentLevel(String itemId) {
-        List<ItemCommentLevelVo> commentList = itemCommentMapper.queryCommentLevel(itemId);
-        Map<String, Integer> map = new HashMap<>(8);
-        Integer totalCounts = 0;
-        for (ItemCommentLevelVo comment : commentList) {
-            Integer commentLevelTotal = comment.getCommentLevelTotal();
-            totalCounts += commentLevelTotal;
-            map.put(comment.getCommentLevel(), commentLevelTotal);
-        }
-        // 总评论
-        map.put("totalCounts", totalCounts);
-        return map;
+    public ItemCommentLevelVo queryCommentLevel(String itemId) {
+        return itemCommentMapper.queryCommentLevel(itemId);
     }
 
     @Override

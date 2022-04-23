@@ -15,9 +15,11 @@ public class ItemCommentLevelVo{
     /**
      * 评论类别总数
      */
-    private Integer commentLevelTotal;
+    private Integer totalCounts;
     /**
-     * 评论类别
+     * 评论类别个数
      */
-    private String commentLevel;
+    private Integer goodCounts;
+    private Integer normalCounts;
+    private Integer badCounts;
 }

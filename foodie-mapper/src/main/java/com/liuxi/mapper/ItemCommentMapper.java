@@ -22,7 +22,7 @@ public interface ItemCommentMapper extends BaseMapper<ItemsComments> {
      * @param itemId
      * @return
      */
-    List<ItemCommentLevelVo> queryCommentLevel(String itemId);
+    ItemCommentLevelVo queryCommentLevel(String itemId);
 
     /**
      * 根据商品id查询商品评论
