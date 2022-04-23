@@ -142,16 +142,6 @@ public class ItemServiceImpl implements ItemService {
         return new PageResult<>(page, pageTotal, count, itemList);
     }
 
-    @Override
-    public PageResult<ItemCommentVo> queryCommentByUserId(String userId, int page, int pageSize) {
-        int currentPage = (page - 1) * pageSize;
-        List<ItemCommentVo> itemCommentList = itemCommentMapper.queryItemCommentByUserId(userId, currentPage, pageSize);
-        int records = itemCommentMapper.queryItemCommentByUserIdCount(userId);
-        int total = records % pageSize;
-        total = total == 0 ? records / pageSize : (records / pageSize) + 1;
-        return new PageResult<>(page, total, records, itemCommentList);
-    }
-
     /**
      * 数据脱敏
      * @param str

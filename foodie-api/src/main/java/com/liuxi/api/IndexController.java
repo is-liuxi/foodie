@@ -61,7 +61,7 @@ public class IndexController {
     }
 
     @GetMapping("sixNewItems/{rootId}")
-    @ApiOperation(value = "查询推荐商品", notes = "查询热门的六个商品")
+    @ApiOperation(value = "查询推荐商品", notes = "查询热门的八个商品")
     public ResultJsonResponse sixNewItems(@ApiParam(name = "rootId", value = "一级分类ID", required = true)
                                           @PathVariable("rootId") Integer rootId) {
         Map<String, Object> map = new HashMap<>(2);

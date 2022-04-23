@@ -1,11 +1,12 @@
 package com.liuxi.service;
 
+import com.liuxi.pojo.ItemsComments;
+import com.liuxi.pojo.OrderItems;
 import com.liuxi.pojo.OrderStatus;
 import com.liuxi.pojo.page.PageResult;
-import com.liuxi.pojo.vo.CenterOrderVo;
-import com.liuxi.pojo.vo.OrderStatusVo;
-import com.liuxi.pojo.vo.OrderVo;
-import com.liuxi.pojo.vo.ShopCartCreateOrderVo;
+import com.liuxi.pojo.vo.*;
+
+import java.util.List;
 
 /**
  * <p>
@@ -69,4 +70,36 @@ public interface OrderService {
      * @return
      */
     PageResult<CenterOrderVo> queryOrderByUserIdAndOrderStatus(String userId, Integer status, int page, int pageSize);
+
+    /**
+     * 确认收货
+     * @param userId
+     * @param orderId
+     */
+    void confirmReceive(String userId, String orderId);
+
+    /**
+     * 查询子订单信息，用于评价商品
+     * @param userId
+     * @param orderId
+     * @return
+     */
+    List<OrderItems> queryCommentByUserIdAndOrderId(String userId, String orderId);
+
+    /**
+     * 根据用户 id 查询评论
+     * @param userId
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    PageResult<ItemCommentVo> queryCommentByUserId(String userId, int page, int pageSize);
+
+    /**
+     * 发布评论
+     * @param userId
+     * @param orderId
+     * @param itemsComments
+     */
+    void publishComments(String userId, String orderId, List<ItemsComments> itemsComments);
 }

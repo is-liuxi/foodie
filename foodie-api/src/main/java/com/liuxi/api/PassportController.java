@@ -4,6 +4,8 @@ import com.aliyun.oss.OSS;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.liuxi.config.AliYunConfig;
+import com.liuxi.pojo.ItemsComments;
+import com.liuxi.pojo.OrderItems;
 import com.liuxi.pojo.User;
 import com.liuxi.pojo.bo.UserRegistryBo;
 import com.liuxi.pojo.bo.UserUpdateBo;
@@ -56,6 +58,8 @@ public class PassportController {
     private OSS oss;
     @Autowired
     private AliYunConfig aliYunConfig;
+    @Autowired
+    private OrderService orderService;
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -163,11 +167,29 @@ public class PassportController {
     }
 
     @GetMapping("queryCommentByUserId")
+    @ApiOperation(value = "查询用户所有商品评价", notes = "查询用户所有商品评价")
     public ResultJsonResponse queryCommentByUserId(@RequestParam("userId") String userId,
                                                    @RequestParam("page") int page,
                                                    @RequestParam("pageSize") int pageSize) {
-        PageResult<ItemCommentVo> pageResult = itemService.queryCommentByUserId(userId, page, pageSize);
+        PageResult<ItemCommentVo> pageResult = orderService.queryCommentByUserId(userId, page, pageSize);
         return ResultJsonResponse.ok(pageResult);
+    }
+
+    @GetMapping("queryCommentByUserIdAndOrderId")
+    @ApiOperation(value = "查询用户订单规格属性，用来评价商品", notes = "查询用户订单规格属性，用来评价商品")
+    public ResultJsonResponse queryCommentByUserIdAndOrderId(@RequestParam("userId") String userId,
+                                                             @RequestParam("orderId") String orderId) {
+        List<OrderItems> orderItems = orderService.queryCommentByUserIdAndOrderId(userId, orderId);
+        return ResultJsonResponse.ok(orderItems);
+    }
+
+    @PostMapping("publishComments")
+    @ApiOperation(value = "发布评论", notes = "发布评论")
+    public ResultJsonResponse publishComments(@RequestParam("userId") String userId,
+                                              @RequestParam("orderId") String orderId,
+                                              @RequestBody List<ItemsComments> itemsComments) {
+        orderService.publishComments(userId, orderId, itemsComments);
+        return ResultJsonResponse.ok();
     }
 
     /**

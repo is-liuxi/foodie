@@ -1,5 +1,6 @@
 package com.liuxi.pojo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -18,7 +19,7 @@ public class ItemsComments {
     /**
      * id主键
      */
-    @TableId
+    @TableId(type = IdType.ASSIGN_ID)
     private String id;
 
     /**

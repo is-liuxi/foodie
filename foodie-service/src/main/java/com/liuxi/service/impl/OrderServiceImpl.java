@@ -1,10 +1,8 @@
 package com.liuxi.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.liuxi.mapper.*;
-import com.liuxi.pojo.OrderItems;
-import com.liuxi.pojo.OrderStatus;
-import com.liuxi.pojo.Orders;
-import com.liuxi.pojo.UserAddress;
+import com.liuxi.pojo.*;
 import com.liuxi.pojo.page.PageResult;
 import com.liuxi.pojo.vo.*;
 import com.liuxi.service.OrderService;
@@ -41,6 +39,8 @@ public class OrderServiceImpl implements OrderService {
     private OrderStatusMapper orderStatusMapper;
     @Autowired
     private ItemSpecMapper itemSpecMapper;
+    @Autowired
+    private ItemCommentMapper itemCommentMapper;
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @Override
@@ -206,5 +206,56 @@ public class OrderServiceImpl implements OrderService {
         int total = records % pageSize;
         total = total == 0 ? records / pageSize : (records / pageSize) + 1;
         return new PageResult<>(page, total, records, orderList);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Override
+    public void confirmReceive(String userId, String orderId) {
+        OrderStatus orderStatus = new OrderStatus();
+        orderStatus.setOrderId(orderId);
+        orderStatus.setOrderStatus(OrderStatusEnum.TRAN_SUCCESS.type);
+        orderStatus.setSuccessTime(new Date());
+        orderStatusMapper.updateById(orderStatus);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Override
+    public List<OrderItems> queryCommentByUserIdAndOrderId(String userId, String orderId) {
+        LambdaQueryWrapper<OrderItems> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(OrderItems::getOrderId, orderId);
+        return orderItemMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public PageResult<ItemCommentVo> queryCommentByUserId(String userId, int page, int pageSize) {
+        int currentPage = (page - 1) * pageSize;
+        List<ItemCommentVo> itemCommentList = itemCommentMapper.queryItemCommentByUserId(userId, currentPage, pageSize);
+        int records = itemCommentMapper.queryItemCommentByUserIdCount(userId);
+        int total = records % pageSize;
+        total = total == 0 ? records / pageSize : (records / pageSize) + 1;
+        return new PageResult<>(page, total, records, itemCommentList);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Override
+    public void publishComments(String userId, String orderId, List<ItemsComments> itemsComments) {
+        // order更新评论字段
+        Orders orders = new Orders();
+        orders.setId(orderId);
+        orders.setIsComment(YesOrNoEnum.YES.type);
+        orderMapper.updateById(orders);
+        // order-status更新评论时间
+        OrderStatus orderStatus = new OrderStatus();
+        orderStatus.setOrderId(orderId);
+        orderStatus.setCommentTime(new Date());
+        orderStatusMapper.updateById(orderStatus);
+        // item-comment 商品评论
+        for (ItemsComments itemsComment : itemsComments) {
+            itemsComment.setUserId(userId);
+            Date date = new Date();
+            itemsComment.setCreatedTime(date);
+            itemsComment.setUpdatedTime(date);
+            itemCommentMapper.insert(itemsComment);
+        }
     }
 }

@@ -47,12 +47,14 @@ public class OrderController {
     }
 
     @GetMapping("getPaidOrderInfo")
+    @ApiOperation(value = "查询订单状态，是否已支付", notes = "查询订单状态，是否已支付")
     public ResultJsonResponse getPaidOrderInfo(@RequestParam("orderId") String orderId) {
         OrderStatus orderStatus = orderService.getPaidOrderInfo(orderId);
         return ResultJsonResponse.ok(orderStatus);
     }
 
     @GetMapping("updateOrderStatus/{orderId}")
+    @ApiOperation(value = "支付成功，修改订单状态", notes = "支付成功，修改订单状态")
     public ResultJsonResponse updateOrderStatus(@PathVariable("orderId") String orderId) {
         orderService.updateOrderStatus(orderId);
         return ResultJsonResponse.ok();
@@ -85,5 +87,16 @@ public class OrderController {
         }
         PageResult<CenterOrderVo> resultList = orderService.queryOrderByUserIdAndOrderStatus(userId, status, page, pageSize);
         return ResultJsonResponse.ok(resultList);
+    }
+
+    @PutMapping("confirmReceive")
+    @ApiOperation(value = "确认收货", notes = "确认收货")
+    public ResultJsonResponse confirmReceive(@RequestParam("userId") String userId,
+                                             @RequestParam("orderId") String orderId) {
+        if (StringUtils.isBlank(userId)) {
+            return ResultJsonResponse.errorMsg("用户未登录");
+        }
+        orderService.confirmReceive(userId, orderId);
+        return ResultJsonResponse.ok();
     }
 }

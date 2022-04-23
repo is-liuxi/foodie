@@ -71,15 +71,6 @@ public interface ItemService {
     Map<String, Integer> queryCommentLevel(String itemId);
 
     /**
-     * 根据用户 id 查询评论
-     * @param userId
-     * @param page
-     * @param pageSize
-     * @return
-     */
-    PageResult<ItemCommentVo> queryCommentByUserId(String userId, int page, int pageSize);
-
-    /**
      * 商品搜索
      * @param keywords 搜索关键字
      * @param sort     排序 【k：默认排序，c：销量排序，p：价格排序】
