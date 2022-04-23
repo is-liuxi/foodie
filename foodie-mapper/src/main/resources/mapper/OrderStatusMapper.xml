@@ -34,9 +34,7 @@
             AND os.order_status BETWEEN 20
             AND 40
         ORDER BY
-            pay_time,
-            deliver_time,
-            success_time ASC
+            orderId
         LIMIT
             #{page}, #{pageSize}
     </select>

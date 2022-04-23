@@ -259,10 +259,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @Override
-    public void deleteOrderById(String orderId) {
+    public void deleteOrderById(String orderId, String userId) {
         Orders order = new Orders();
         order.setId(orderId);
         order.setIsDelete(YesOrNoEnum.YES.type);
+        order.setUserId(userId);
+        Date date = new Date();
+        order.setUpdatedTime(date);
         orderMapper.updateById(order);
+
+        // 修改订单表中的状态
+        OrderStatus orderStatus = new OrderStatus();
+        orderStatus.setOrderId(orderId);
+        orderStatus.setOrderStatus(OrderStatusEnum.TRAN_FAIL.type);
+        orderStatus.setCloseTime(date);
+        orderStatusMapper.updateById(orderStatus);
     }
 }

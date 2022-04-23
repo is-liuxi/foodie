@@ -106,6 +106,7 @@ public interface OrderService {
     /**
      * 删除未支付的订单
      * @param orderId
+     * @param userId
      */
-    void deleteOrderById(String orderId);
+    void deleteOrderById(String orderId, String userId);
 }

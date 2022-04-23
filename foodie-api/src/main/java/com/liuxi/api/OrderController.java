@@ -100,10 +100,10 @@ public class OrderController {
         return ResultJsonResponse.ok();
     }
 
-    @DeleteMapping("deleteOrderById/{id}")
+    @DeleteMapping("deleteOrderById/{id}/{userId}")
     @ApiOperation(value = "删除订单", notes = "逻辑删除未支付的订单")
-    public ResultJsonResponse deleteOrderById(@PathVariable("id") String orderId) {
-        orderService.deleteOrderById(orderId);
+    public ResultJsonResponse deleteOrderById(@PathVariable("id") String orderId, @PathVariable("userId") String userId) {
+        orderService.deleteOrderById(orderId, userId);
         return ResultJsonResponse.ok();
     }
 }
