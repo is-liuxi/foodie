@@ -7,7 +7,7 @@ import java.security.SecureRandom;
 
 public class IdWorker {
     protected final long workerId;
-//    protected long epoch = 1387886498127L; // 2013-12-24 20:01:38.127
+    //    protected long epoch = 1387886498127L; // 2013-12-24 20:01:38.127
     protected long epoch = 1288834974657L;
     protected long workerIdBits = 10L;
     protected long maxWorkerId = -1L ^ (-1L << workerIdBits);

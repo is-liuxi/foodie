@@ -24,7 +24,8 @@
         <result column="orderStatus" property="orderStatus"/>
         <result column="isComment" property="isComment"/>
         <result column="createdTime" property="createdTime"/>
-        <collection property="subOrderItemList" select="queryOrderByUserIdAndOrderStatusSub" column="orderId" ofType="com.liuxi.pojo.vo.CenterSubOrderVo">
+        <collection property="subOrderItemList" select="queryOrderByUserIdAndOrderStatusSub" column="orderId"
+                    ofType="com.liuxi.pojo.vo.CenterSubOrderVo">
             <id column="specId" property="specId"/>
             <result column="buyCounts" property="buyCounts"/>
             <result column="price" property="price"/>
@@ -37,22 +38,22 @@
     <!-- 嵌套分页有 bug -->
     <select id="queryOrderByUserIdAndOrderStatus" resultMap="queryOrderByUserIdAndOrderStatus">
         SELECT
-            o.id AS orderId,
-            o.pay_method AS paymethod,
-            o.real_pay_amount AS realPayAmount,
-            o.post_amount AS postAmount,
-            o.created_time AS createdTime,
-            o.is_comment AS isComment,
-            os.order_status AS orderStatus
+        o.id AS orderId,
+        o.pay_method AS paymethod,
+        o.real_pay_amount AS realPayAmount,
+        o.post_amount AS postAmount,
+        o.created_time AS createdTime,
+        o.is_comment AS isComment,
+        os.order_status AS orderStatus
         FROM
-            orders o
-            LEFT JOIN order_status os ON o.id = os.order_id
+        orders o
+        LEFT JOIN order_status os ON o.id = os.order_id
         WHERE
-            user_id = #{userId}
-            <if test="status != null and status != ''">
-                AND os.order_status = #{status}
-            </if>
-            AND is_delete = 0
+        user_id = #{userId}
+        <if test="status != null and status != ''">
+            AND os.order_status = #{status}
+        </if>
+        AND is_delete = 0
         ORDER BY createdTime DESC
         LIMIT #{page},#{pageSize}
     </select>
@@ -92,45 +93,45 @@
     <!-- 嵌套分页有 bug -->
     <select id="queryOrderByUserIdAndOrderStatusNotUse" resultMap="queryOrderByUserIdAndOrderStatusNotUse">
         SELECT
-            o.id AS orderId,
-            o.pay_method AS paymethod,
-            o.real_pay_amount AS realPayAmount,
-            o.post_amount AS postAmount,
-            o.created_time AS createdTime,
-            o.is_comment AS isComment,
-            oi.item_img AS itemImg,
-            oi.item_spec_name AS itemSpecName,
-            oi.item_id AS itemId,
-            oi.item_spec_id AS specId,
-            oi.item_name AS itemName,
-            oi.price AS price,
-            oi.buy_counts AS buyCounts,
-            os.order_status AS orderStatus
+        o.id AS orderId,
+        o.pay_method AS paymethod,
+        o.real_pay_amount AS realPayAmount,
+        o.post_amount AS postAmount,
+        o.created_time AS createdTime,
+        o.is_comment AS isComment,
+        oi.item_img AS itemImg,
+        oi.item_spec_name AS itemSpecName,
+        oi.item_id AS itemId,
+        oi.item_spec_id AS specId,
+        oi.item_name AS itemName,
+        oi.price AS price,
+        oi.buy_counts AS buyCounts,
+        os.order_status AS orderStatus
         FROM
-            orders o
-            LEFT JOIN order_items oi ON o.id = oi.order_id
-            LEFT JOIN order_status os ON o.id = os.order_id
+        orders o
+        LEFT JOIN order_items oi ON o.id = oi.order_id
+        LEFT JOIN order_status os ON o.id = os.order_id
         WHERE
-            user_id = #{userId}
-            <if test="status != null and status != ''">
-                AND os.order_status = #{status}
-            </if>
-            AND is_delete = 0
+        user_id = #{userId}
+        <if test="status != null and status != ''">
+            AND os.order_status = #{status}
+        </if>
+        AND is_delete = 0
         ORDER BY createdTime DESC
         LIMIT #{page},#{pageSize}
     </select>
 
     <select id="queryOrderByUserIdAndOrderStatusCount" resultType="int">
         SELECT
-            count(*)
+        count(*)
         FROM
-            orders o
-            LEFT JOIN order_status os ON o.id = os.order_id
+        orders o
+        LEFT JOIN order_status os ON o.id = os.order_id
         WHERE
-            user_id = #{userId}
-            <if test="status != null and status != ''">
-                AND os.order_status = #{status}
-            </if>
-            AND is_delete = 0
+        user_id = #{userId}
+        <if test="status != null and status != ''">
+            AND os.order_status = #{status}
+        </if>
+        AND is_delete = 0
     </select>
 </mapper>

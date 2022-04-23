@@ -6,34 +6,34 @@
 
     <select id="queryCommentsPage" resultType="itemCommentVo">
         SELECT
-            u.face AS userFace,
-            u.nickname AS nickname,
-            ic.created_time AS createdTime,
-            ic.comment_level AS commentLevel,
-            ic.content AS content,
-            ic.sepc_name AS specName
+        u.face AS userFace,
+        u.nickname AS nickname,
+        ic.created_time AS createdTime,
+        ic.comment_level AS commentLevel,
+        ic.content AS content,
+        ic.sepc_name AS specName
         FROM
-            items_comments ic
-            INNER JOIN users u ON ic.user_id = u.id
+        items_comments ic
+        INNER JOIN users u ON ic.user_id = u.id
         WHERE
-	        ic.item_id = #{itemId}
-	        <if test="commentLevel != null and commentLevel != ''">
-                AND ic.comment_level = #{commentLevel}
-            </if>
+        ic.item_id = #{itemId}
+        <if test="commentLevel != null and commentLevel != ''">
+            AND ic.comment_level = #{commentLevel}
+        </if>
         LIMIT #{page}, #{pageSize}
     </select>
 
     <select id="queryCommentsPageCount" resultType="long">
         SELECT
-            count(*)
+        count(*)
         FROM
-            items_comments ic
-            INNER JOIN users u ON ic.user_id = u.id
+        items_comments ic
+        INNER JOIN users u ON ic.user_id = u.id
         WHERE
-            ic.item_id = #{itemId}
-            <if test="commentLevel">
-                AND ic.comment_level = #{commentLevel}
-            </if>
+        ic.item_id = #{itemId}
+        <if test="commentLevel">
+            AND ic.comment_level = #{commentLevel}
+        </if>
     </select>
 
     <select id="queryCommentLevel" resultType="com.liuxi.pojo.vo.ItemCommentLevelVo">

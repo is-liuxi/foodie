@@ -1,13 +1,15 @@
 package com.liuxi.service;
 
-import com.liuxi.pojo.*;
+import com.liuxi.pojo.Items;
+import com.liuxi.pojo.ItemsImg;
+import com.liuxi.pojo.ItemsParam;
+import com.liuxi.pojo.ItemsSpec;
 import com.liuxi.pojo.page.PageResult;
 import com.liuxi.pojo.vo.ItemCommentLevelVo;
 import com.liuxi.pojo.vo.ItemCommentVo;
 import com.liuxi.pojo.vo.ItemSearchVo;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>

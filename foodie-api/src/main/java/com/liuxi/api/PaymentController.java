@@ -41,7 +41,7 @@ public class PaymentController {
     @PostMapping("goAiPay")
     @ApiOperation(value = "生成微信支付二维码", notes = "生成微信支付二维码")
     public ResultJsonResponse goAiPay(@RequestParam("merchantUserId") String merchantUserId,
-                                                 @RequestParam("merchantOrderId") String merchantOrderId) {
+                                      @RequestParam("merchantOrderId") String merchantOrderId) {
         if (StringUtils.isEmpty(merchantUserId)) {
             return ResultJsonResponse.errorMsg("用户未登录");
         }

@@ -1,8 +1,6 @@
 package com.liuxi.util.idwork.utils;
 
 import java.io.*;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class Utils {

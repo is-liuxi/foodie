@@ -1,6 +1,5 @@
 package com.liuxi.pojo.vo;
 
-import com.liuxi.pojo.Orders;
 import lombok.Data;
 
 /**

@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * <p>
- *  WEBMVC 设置
+ * WEBMVC 设置
  * </P>
  * @author liu xi
  * @date 2022/4/17 23:52

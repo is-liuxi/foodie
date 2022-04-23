@@ -1,8 +1,6 @@
 package com.liuxi.api;
 
-import com.liuxi.pojo.vo.ShopCartCreateOrderVo;
 import com.liuxi.pojo.vo.ShopCartVo;
-import com.liuxi.service.OrderService;
 import com.liuxi.service.ShopCartService;
 import com.liuxi.util.common.ResultJsonResponse;
 import io.swagger.annotations.Api;

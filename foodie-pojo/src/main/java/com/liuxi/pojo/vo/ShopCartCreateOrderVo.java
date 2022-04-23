@@ -4,7 +4,7 @@ import lombok.Data;
 
 /**
  * <p>
- *  购物车生成订单 VO
+ * 购物车生成订单 VO
  * </P>
  * @author liu xi
  * @date 2022/4/20 23:53

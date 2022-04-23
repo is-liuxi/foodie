@@ -5,7 +5,7 @@ import com.liuxi.pojo.ItemsImg;
 import com.liuxi.pojo.ItemsParam;
 import com.liuxi.pojo.ItemsSpec;
 import com.liuxi.pojo.page.PageResult;
-import com.liuxi.pojo.vo.ShopCartVo;
+import com.liuxi.pojo.vo.ItemCommentLevelVo;
 import com.liuxi.pojo.vo.ItemCommentVo;
 import com.liuxi.pojo.vo.ItemSearchVo;
 import com.liuxi.service.ItemService;
@@ -65,7 +65,11 @@ public class ItemController {
     @GetMapping("commentLevel/{itemId}")
     @ApiOperation(value = "查询商品评论总数", notes = "查询商品各种级别评论总数")
     public ResultJsonResponse commentLevel(@PathVariable String itemId) {
-        return ResultJsonResponse.ok(itemService.queryCommentLevel(itemId));
+        ItemCommentLevelVo itemCommentLevelVo = itemService.queryCommentLevel(itemId);
+        if (itemCommentLevelVo == null) {
+            itemCommentLevelVo = new ItemCommentLevelVo();
+        }
+        return ResultJsonResponse.ok(itemCommentLevelVo);
     }
 
     @GetMapping("search")

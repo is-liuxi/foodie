@@ -50,6 +50,7 @@ import java.util.stream.Collectors;
 @Api(description = "用户管理", tags = "用户操作")
 public class PassportController {
 
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     @Autowired
     private UserService userService;
     @Autowired
@@ -60,8 +61,6 @@ public class PassportController {
     private AliYunConfig aliYunConfig;
     @Autowired
     private OrderService orderService;
-
-    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @GetMapping("queryUsernameIsExist")
     @ApiOperation(value = "查询用户名是否存在", notes = "根据用户名查询是否存在")

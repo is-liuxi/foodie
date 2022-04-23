@@ -14,6 +14,7 @@ import java.util.List;
  */
 @Data
 public class CenterOrderVo {
+    List<CenterSubOrderVo> subOrderItemList;
     private String orderId;
     private Integer payMethod;
     private Integer realPayAmount;
@@ -21,5 +22,4 @@ public class CenterOrderVo {
     private Integer orderStatus;
     private Integer isComment;
     private Date createdTime;
-    List<CenterSubOrderVo> subOrderItemList;
 }

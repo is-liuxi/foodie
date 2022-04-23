@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * <p>
- *  轮播图操作
+ * 轮播图操作
  * </P>
  * @author LiuXi
  * @date 2022/4/18 16:30

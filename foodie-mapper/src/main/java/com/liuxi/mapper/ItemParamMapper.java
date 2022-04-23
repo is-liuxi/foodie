@@ -5,7 +5,7 @@ import com.liuxi.pojo.ItemsParam;
 
 /**
  * <p>
- *  商品参数
+ * 商品参数
  * </P>
  * @author LiuXi
  * @date 2022/4/19 0:13
