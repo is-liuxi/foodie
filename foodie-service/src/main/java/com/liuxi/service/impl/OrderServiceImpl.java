@@ -265,7 +265,6 @@ public class OrderServiceImpl implements OrderService {
         Orders order = new Orders();
         order.setId(orderId);
         order.setIsDelete(YesOrNoEnum.YES.type);
-        order.setUserId(userId);
         Date date = new Date();
         order.setUpdatedTime(date);
         orderMapper.updateById(order);
