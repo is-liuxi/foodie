@@ -6,7 +6,7 @@ import com.liuxi.pojo.vo.CenterOrderVo;
 import com.liuxi.pojo.vo.OrderStatusVo;
 import com.liuxi.pojo.vo.ShopCartCreateOrderVo;
 import com.liuxi.service.OrderService;
-import com.liuxi.util.ConstantUtils;
+import com.liuxi.util.common.ConstantUtils;
 import com.liuxi.util.common.ResultJsonResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -66,7 +66,7 @@
         <result column="name" property="name"/>
         <result column="type" property="type"/>
         <result column="fatherId" property="fatherId"/>
-        <collection property="subCatList" ofType="categoryVo">
+        <collection property="subCatList" ofType="categorySubVo">
             <id column="subId" property="subId"/>
             <result column="subName" property="subName"/>
             <result column="subType" property="subType"/>

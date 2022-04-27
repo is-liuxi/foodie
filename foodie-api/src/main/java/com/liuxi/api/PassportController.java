@@ -202,7 +202,7 @@ public class PassportController {
             String jsonUser = MAPPER.writeValueAsString(user);
             cookie = new Cookie("user", URLEncoder.encode(jsonUser, StandardCharsets.UTF_8.toString()));
             cookie.setPath("/");
-            cookie.setMaxAge(60 * 30);
+            cookie.setMaxAge(60 * 60);
         } catch (JsonProcessingException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }

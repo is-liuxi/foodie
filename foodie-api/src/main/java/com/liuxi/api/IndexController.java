@@ -34,7 +34,6 @@ public class IndexController {
 
     @Autowired
     private CarouselService carouselService;
-
     @Autowired
     private CategoryService categoryService;
 

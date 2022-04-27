@@ -2,6 +2,7 @@ server:
   port: 2233
 #############################################
 spring:
+  #---------------数据库连接 Hikari--------------------------
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:mysql:///imooc_foodie_shopping?characterEncoding=utf8&serverTimezone=Asia/Shanghai
@@ -25,10 +26,15 @@ spring:
       max-lifetime: 1800000
       # 连接时测试
       connection-test-query: SELECT 1
+  #--------------文件上传-----------------------
   servlet:
     multipart:
       max-file-size: 500KB
       max-request-size: 500KB
+  #-----------------------------------------
+  redis:
+    host: 192.168.92.121
+    database: 1
 #############################################
 mybatis-plus:
   type-aliases-package: com.liuxi.pojo
