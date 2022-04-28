@@ -2,6 +2,7 @@ package com.liuxi.test;
 
 import org.junit.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
@@ -39,5 +40,7 @@ public class NonSpringTest {
     public void test3() {
         String str = "aa";
         System.out.println(Arrays.toString(str.split(",")));
+
+        System.out.println(StandardCharsets.UTF_8.toString());
     }
 }

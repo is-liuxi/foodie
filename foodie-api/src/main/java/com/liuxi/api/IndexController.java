@@ -44,14 +44,14 @@ public class IndexController {
         return ResultJsonResponse.ok(carouselList);
     }
 
-    @GetMapping("cats")
+    @GetMapping("category")
     @ApiOperation(value = "查询父级分类", notes = "查询大分类")
     public ResultJsonResponse cats() {
         List<Category> list = categoryService.queryCategoryRootList(1);
         return ResultJsonResponse.ok(list);
     }
 
-    @GetMapping("subCat/{rootId}")
+    @GetMapping("subCategory/{rootId}")
     @ApiOperation(value = "查询子分类", notes = "查询二三级分类")
     public ResultJsonResponse subCats(@ApiParam(name = "rootId", value = "一级分类ID", required = true)
                                       @PathVariable("rootId") Integer rootId) {

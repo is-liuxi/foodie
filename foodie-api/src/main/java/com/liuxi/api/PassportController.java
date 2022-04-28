@@ -1,6 +1,7 @@
 package com.liuxi.api;
 
 import com.aliyun.oss.OSS;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.liuxi.config.AliYunConfig;
@@ -11,10 +12,13 @@ import com.liuxi.pojo.bo.UserRegistryBo;
 import com.liuxi.pojo.bo.UserUpdateBo;
 import com.liuxi.pojo.page.PageResult;
 import com.liuxi.pojo.vo.ItemCommentVo;
+import com.liuxi.pojo.vo.ShopCartVo;
 import com.liuxi.service.ItemService;
 import com.liuxi.service.OrderService;
 import com.liuxi.service.UserService;
 import com.liuxi.util.FileUtils;
+import com.liuxi.util.common.JsonUtils;
+import com.liuxi.util.common.RedisUtils;
 import com.liuxi.util.common.ResultJsonResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -28,15 +32,24 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.liuxi.util.common.ConstantUtils.SHOP_CART_COOKIE_KEY;
+import static com.liuxi.util.common.ConstantUtils.SHOP_CART_REDIS_KEY;
 
 /**
  * <p>
@@ -48,7 +61,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("user")
 @Api(description = "用户管理", tags = "用户操作")
-public class PassportController {
+public class PassportController extends BaseController {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
     @Autowired
@@ -75,7 +88,7 @@ public class PassportController {
 
     @PostMapping("register")
     @ApiOperation(value = "注册用户", notes = "注册用户信息")
-    public ResultJsonResponse createUser(@RequestBody UserRegistryBo userBo, HttpServletResponse response) {
+    public ResultJsonResponse createUser(@RequestBody UserRegistryBo userBo, HttpServletResponse response, HttpServletRequest request) throws UnsupportedEncodingException {
         if (userBo == null || StringUtils.isBlank(userBo.getPassword()) || StringUtils.isBlank(userBo.getConfirmPassword())
                 || StringUtils.isBlank(userBo.getUsername())) {
             return ResultJsonResponse.errorMsg("用户信息不能为空");
@@ -93,6 +106,11 @@ public class PassportController {
         }
         User user = userService.createUser(userBo);
         setCookieVal(response, user);
+
+        String cookieValue = getShopCartCookieValue(request);
+        if (StringUtils.isNotBlank(cookieValue)) {
+            RedisUtils.set(SHOP_CART_REDIS_KEY + user.getId(), cookieValue);
+        }
         return ResultJsonResponse.ok(user);
     }
 
@@ -102,7 +120,7 @@ public class PassportController {
             @ApiImplicitParam(name = "username", required = true, dataType = "string"),
             @ApiImplicitParam(name = "password", required = true, dataType = "string")
     })
-    public ResultJsonResponse login(@RequestBody UserRegistryBo userBo, HttpServletResponse response) {
+    public ResultJsonResponse login(@RequestBody UserRegistryBo userBo, HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         if (userBo == null || StringUtils.isBlank(userBo.getPassword()) || StringUtils.isBlank(userBo.getUsername())) {
             return ResultJsonResponse.errorMsg("用户信息不能为空");
         }
@@ -110,6 +128,36 @@ public class PassportController {
         if (user == null) {
             return ResultJsonResponse.errorMsg("用户名或者密码不正确");
         }
+
+        String cookieValue = getShopCartCookieValue(request);
+        // 从缓存中获取
+        String cacheValue = RedisUtils.get(SHOP_CART_REDIS_KEY + user.getId());
+        String newCacheValue = "";
+        List<ShopCartVo> cacheShopCartList = JsonUtils.jsonToList(cacheValue, ShopCartVo.class);
+        // Cookie 中有数据，合并
+        if (StringUtils.isNotBlank(cookieValue)) {
+            List<ShopCartVo> shopCartVoList = JsonUtils.jsonToList(cookieValue, ShopCartVo.class);
+            // 合并购物车中的数据
+            Map<String, List<ShopCartVo>> specIdListMap = Optional.ofNullable(shopCartVoList).map(List::stream).orElseGet(Stream::empty).collect(Collectors.groupingBy(ShopCartVo::getSpecId));
+            if (CollectionUtils.isNotEmpty(cacheShopCartList)) {
+                for (ShopCartVo item : cacheShopCartList) {
+                    // 已经存在缓存中，buyCount +
+                    List<ShopCartVo> cartVoList = specIdListMap.get(item.getSpecId());
+                    if (CollectionUtils.isNotEmpty(cartVoList)) {
+                        item.setBuyCounts(item.getBuyCounts() + cartVoList.get(0).getBuyCounts());
+                        specIdListMap.remove(item.getSpecId());
+                    }
+                }
+            } else {
+                cacheShopCartList = new ArrayList<>();
+                for (List<ShopCartVo> next : specIdListMap.values()) {
+                    cacheShopCartList.addAll(next);
+                }
+            }
+        }
+        newCacheValue = JsonUtils.writeValueAsString(cacheShopCartList);
+        RedisUtils.set(SHOP_CART_REDIS_KEY + user.getId(), newCacheValue);
+        response.addCookie(updateCookie(newCacheValue));
         setCookieVal(response, user);
         return ResultJsonResponse.ok(user);
     }
@@ -159,9 +207,14 @@ public class PassportController {
     @PostMapping("logout")
     @ApiOperation(value = "用户注销", notes = "用户退出登录，删除 cookie 信息")
     public ResultJsonResponse logout(@RequestParam("userId") String userId, HttpServletResponse response) {
-        Cookie cookie = new Cookie("user", null);
-        cookie.setPath("/");
-        response.addCookie(cookie);
+        Cookie userCookie = new Cookie("user", null);
+        Cookie shopCartCookie = new Cookie(SHOP_CART_COOKIE_KEY, null);
+        userCookie.setPath("/");
+        shopCartCookie.setPath("/");
+        userCookie.setMaxAge(0);
+        shopCartCookie.setMaxAge(0);
+        response.addCookie(userCookie);
+        response.addCookie(shopCartCookie);
         return ResultJsonResponse.ok();
     }
 
@@ -208,4 +261,26 @@ public class PassportController {
         }
         response.addCookie(cookie);
     }
+
+    /**
+     * 获取 Cookie 中购物车数据
+     * @param request
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    private String getShopCartCookieValue(HttpServletRequest request) throws UnsupportedEncodingException {
+        Cookie[] cookies = request.getCookies();
+        String cookieValue = "";
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (SHOP_CART_COOKIE_KEY.equals(cookie.getName())) {
+                    cookieValue = cookie.getValue();
+                    cookieValue = URLDecoder.decode(cookieValue, StandardCharsets.UTF_8.toString());
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
 }

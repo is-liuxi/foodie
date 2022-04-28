@@ -1,11 +1,14 @@
 package com.liuxi.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.liuxi.mapper.*;
 import com.liuxi.pojo.*;
 import com.liuxi.pojo.page.PageResult;
 import com.liuxi.pojo.vo.*;
 import com.liuxi.service.OrderService;
+import com.liuxi.util.common.JsonUtils;
+import com.liuxi.util.common.RedisUtils;
 import com.liuxi.util.enums.OrderStatusEnum;
 import com.liuxi.util.enums.YesOrNoEnum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.liuxi.util.common.ConstantUtils.SHOP_CART_REDIS_KEY;
 
 /**
  * <p>
@@ -60,11 +65,19 @@ public class OrderServiceImpl implements OrderService {
         Date date = new Date();
         // 设置订单基本信息
         this.setOrderBasicInfo(order, vo, date);
-        // TODO 订单中价格+数量
+
+        // 从缓存中获取购物车中商品的数量
+        String cacheValue = RedisUtils.get(SHOP_CART_REDIS_KEY + vo.getUserId());
+        List<ShopCartVo> shopCartVoList = JsonUtils.jsonToList(cacheValue, ShopCartVo.class);
+        // specId：{对象}
+        Map<String, List<ShopCartVo>> shopCartListMap = Optional.ofNullable(shopCartVoList).map(List::stream).orElseGet(Stream::empty)
+                .collect(Collectors.groupingBy(ShopCartVo::getSpecId));
+        // 拿到购买商品规格对应的数量的数量
+        this.setByCount(itemList, shopCartListMap);
         // 订单总价格
-        int priceDiscount = itemList.stream().mapToInt(ShopCartVo::getPriceDiscount).reduce(Integer::sum).orElse(0);
+        int priceDiscount = itemList.stream().mapToInt(item -> item.getPriceDiscount() * item.getBuyCounts()).reduce(Integer::sum).orElse(0);
         // 实际支付价格
-        int priceNormal = itemList.stream().mapToInt(ShopCartVo::getPriceNormal).reduce(Integer::sum).orElse(0);
+        int priceNormal = itemList.stream().mapToInt(item -> item.getPriceNormal() * item.getBuyCounts()).reduce(Integer::sum).orElse(0);
         order.setRealPayAmount(priceNormal);
         order.setTotalAmount(priceDiscount);
         // 保存到数据库中
@@ -76,8 +89,37 @@ public class OrderServiceImpl implements OrderService {
         this.saveOrderItemData(itemList, orderId);
         // 交易状态
         this.saveOrderStatus(orderId, date);
-        // TODO 删除购物车中商品
+
+        // 删除已经生成订单的缓存数据
+        for (String specId : specIds) {
+            List<ShopCartVo> shopCartVos = shopCartListMap.get(specId);
+            if (CollectionUtils.isNotEmpty(shopCartVos)) {
+                shopCartListMap.remove(specId);
+            }
+        }
+        // 未结算的购物车数据重新添加到购物车中
+        Iterator<Map.Entry<String, List<ShopCartVo>>> iterator = shopCartListMap.entrySet().iterator();
+        List<ShopCartVo> newCacheValue = new ArrayList<>();
+        while (iterator.hasNext()) {
+            Map.Entry<String, List<ShopCartVo>> next = iterator.next();
+            List<ShopCartVo> value = next.getValue();
+            newCacheValue.addAll(value);
+        }
+        RedisUtils.set(SHOP_CART_REDIS_KEY + vo.getUserId(), JsonUtils.writeValueAsString(newCacheValue));
         return orderId;
+    }
+
+    /**
+     * 设置购买的数量
+     * @param itemList
+     * @param shopCartListMap
+     */
+    private void setByCount(List<ShopCartVo> itemList, Map<String, List<ShopCartVo>> shopCartListMap) {
+        for (ShopCartVo item : itemList) {
+            List<ShopCartVo> cartVoList = shopCartListMap.get(item.getSpecId());
+            Integer buyCounts = cartVoList.get(0).getBuyCounts();
+            item.setBuyCounts(buyCounts);
+        }
     }
 
     /**
@@ -113,9 +155,9 @@ public class OrderServiceImpl implements OrderService {
             orderItems.setItemName(item.getItemName());
             orderItems.setItemSpecId(item.getSpecId());
             orderItems.setItemSpecName(item.getSpecName());
-            orderItems.setBuyCounts(1);
-            // TODO 价格、数量
-            orderItems.setPrice(item.getPriceDiscount());
+            Integer buyCounts = item.getBuyCounts();
+            orderItems.setBuyCounts(buyCounts);
+            orderItems.setPrice(item.getPriceDiscount() * buyCounts);
             orderItemMapper.insert(orderItems);
             // 减去库存。使用乐观锁
             int checkStock = itemSpecMapper.decrItemStock(buyCount, item.getSpecId());

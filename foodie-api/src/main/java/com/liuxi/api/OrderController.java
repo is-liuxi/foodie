@@ -6,7 +6,7 @@ import com.liuxi.pojo.vo.CenterOrderVo;
 import com.liuxi.pojo.vo.OrderStatusVo;
 import com.liuxi.pojo.vo.ShopCartCreateOrderVo;
 import com.liuxi.service.OrderService;
-import com.liuxi.util.common.ConstantUtils;
+import com.liuxi.util.common.RedisUtils;
 import com.liuxi.util.common.ResultJsonResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,8 +14,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+
+import static com.liuxi.util.common.ConstantUtils.SHOP_CART_REDIS_KEY;
 
 /**
  * <p>
@@ -27,22 +29,22 @@ import javax.servlet.http.HttpServletResponse;
 @Api(description = "订单管理", tags = "订单管理")
 @RestController
 @RequestMapping("orders")
-public class OrderController {
+public class OrderController extends BaseController {
 
     @Autowired
     private OrderService orderService;
 
     @PostMapping("create")
-    @ApiOperation(value = "生成订单", notes = "生成订单")
-    public ResultJsonResponse createOrder(@RequestBody ShopCartCreateOrderVo shopCartCreateOrderVo, HttpServletResponse response) {
+    @ApiOperation(value = "购物车生成订单", notes = "生成订单")
+    public ResultJsonResponse createOrder(@RequestBody ShopCartCreateOrderVo shopCartCreateOrderVo, HttpServletResponse response) throws UnsupportedEncodingException {
         if (shopCartCreateOrderVo.getPayMethod() == null) {
             return ResultJsonResponse.errorMsg("请选择支付方式");
         }
         String orderId = orderService.createOrder(shopCartCreateOrderVo);
+
         // 删除购物车中的 Cookie
-        Cookie cookie = new Cookie(ConstantUtils.FOOD_SHOP_CART_COOKIE_KEY, "");
-        cookie.setPath("/");
-        response.addCookie(cookie);
+        String cacheValue = RedisUtils.get(SHOP_CART_REDIS_KEY + shopCartCreateOrderVo.getUserId());
+        response.addCookie(updateCookie(cacheValue));
         return ResultJsonResponse.ok(orderId);
     }
 

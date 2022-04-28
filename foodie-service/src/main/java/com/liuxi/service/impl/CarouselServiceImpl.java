@@ -30,15 +30,15 @@ public class CarouselServiceImpl implements CarouselService {
     @Override
     public List<Carousel> queryCarousel() {
         // 查看是否存在缓存 key，存在，直接返回缓存中得数据
-        Boolean exist = RedisUtils.hasKey(ConstantUtils.CAROUSEL_CART_REDIS_KEY);
+        Boolean exist = RedisUtils.hasKey(ConstantUtils.CAROUSEL_REDIS_KEY);
         if (exist) {
-            String cacheValue = RedisUtils.get(ConstantUtils.CAROUSEL_CART_REDIS_KEY);
+            String cacheValue = RedisUtils.get(ConstantUtils.CAROUSEL_REDIS_KEY);
             return JsonUtils.jsonToList(cacheValue, Carousel.class);
         }
 
         List<Carousel> carouselList = carouselMapper.queryCarousel(YesOrNoEnum.YES.type);
         // 设置缓存
-        RedisUtils.set(ConstantUtils.CAROUSEL_CART_REDIS_KEY, JsonUtils.writeValueAsString(carouselList), 60 * 60);
+        RedisUtils.set(ConstantUtils.CAROUSEL_REDIS_KEY, JsonUtils.writeValueAsString(carouselList), 60 * 60);
         return carouselList;
     }
 }

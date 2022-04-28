@@ -12,16 +12,26 @@ public interface ConstantUtils {
     /**
      * 购物车 Cookie key
      */
-    String FOOD_SHOP_CART_COOKIE_KEY = "shopcart";
+    String SHOP_CART_COOKIE_KEY = "shopcart";
 
     /**
      * 购物车缓存 key
      */
-    String FOOD_SHOP_CART_REDIS_KEY = "shopcart";
+    String SHOP_CART_REDIS_KEY = "shopCart:";
 
     /**
      * 轮播图缓存 key
      */
-    String CAROUSEL_CART_REDIS_KEY = "carousel";
+    String CAROUSEL_REDIS_KEY = "carousel";
+
+    /**
+     * 商品一级分类缓存 key
+     */
+    String CATEGORY_REDIS_KEY = "category";
+
+    /**
+     * 商品二级分类缓存 key
+     */
+    String SUB_CATEGORY_REDIS_KEY = "sub_category:";
 
 }

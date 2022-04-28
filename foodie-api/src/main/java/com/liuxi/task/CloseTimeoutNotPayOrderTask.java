@@ -26,9 +26,9 @@ public class CloseTimeoutNotPayOrderTask {
     private OrderStatusMapper orderStatusMapper;
 
     /**
-     * 没三十分钟修改未支付状态
+     * 每二十四小时修改未支付状态
      */
-    @Scheduled(fixedRate = 30 * 60 * 1000)
+    @Scheduled(fixedRate = 24 * 60 * 60 * 1000)
     public void autoCloseOrder() {
         // 查询所有待付款的订单
         LambdaQueryWrapper<OrderStatus> queryWrapper = new LambdaQueryWrapper<>();
