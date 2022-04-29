@@ -25,4 +25,10 @@ public class BaseController {
         }
         return cookie;
     }
+
+    public Cookie addCookie(String name, String value) throws UnsupportedEncodingException {
+        Cookie cookie = new Cookie(name, URLEncoder.encode(value, StandardCharsets.UTF_8.toString()));
+        cookie.setPath("/");
+        return cookie;
+    }
 }

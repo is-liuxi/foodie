@@ -41,15 +41,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.liuxi.util.common.ConstantUtils.SHOP_CART_COOKIE_KEY;
-import static com.liuxi.util.common.ConstantUtils.SHOP_CART_REDIS_KEY;
+import static com.liuxi.util.common.ConstantUtils.*;
 
 /**
  * <p>
@@ -107,6 +103,7 @@ public class PassportController extends BaseController {
         User user = userService.createUser(userBo);
         setCookieVal(response, user);
 
+        // 购物车缓存
         String cookieValue = getShopCartCookieValue(request);
         if (StringUtils.isNotBlank(cookieValue)) {
             RedisUtils.set(SHOP_CART_REDIS_KEY + user.getId(), cookieValue);
@@ -128,6 +125,11 @@ public class PassportController extends BaseController {
         if (user == null) {
             return ResultJsonResponse.errorMsg("用户名或者密码不正确");
         }
+
+        // 实现用户会话保存到 Redis 中
+        String uniqueToken = UUID.randomUUID().toString().trim();
+        RedisUtils.set(USER_REDIS_TOKEN_KEY + user.getId(), uniqueToken);
+        response.setHeader(USER_COOKIE_TOKEN_KEY, uniqueToken);
 
         String cookieValue = getShopCartCookieValue(request);
         // 从缓存中获取

@@ -46,7 +46,7 @@
             i.created_time AS createdTime
         FROM
             category c
-            LEFT JOIN items i ON c.id = i.root_cat_id
+            LEFT JOIN esItems i ON c.id = i.root_cat_id
             LEFT JOIN items_img ii ON i.id = ii.item_id
         WHERE
             /* 是否上架 */

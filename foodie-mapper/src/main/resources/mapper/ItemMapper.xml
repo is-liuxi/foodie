@@ -12,7 +12,7 @@
             ise.price_discount AS price,
             ii.url AS imgUrl
         FROM
-            `items` i
+            `esItems` i
             /* 搜索展示最小的价格商品 spu */
             LEFT JOIN ( SELECT min( price_discount ) AS price_discount, item_id FROM items_spec GROUP BY item_id ) ise ON i.id = ise.item_id
             LEFT JOIN items_img ii ON i.id = ii.item_id
@@ -35,7 +35,7 @@
         ise.price_discount AS price,
         ii.url AS imgUrl
         FROM
-        items i
+        esItems i
         LEFT JOIN ( SELECT min( price_discount ) AS price_discount, item_id FROM items_spec GROUP BY item_id ) ise ON
         i.id = ise.item_id
         LEFT JOIN items_img ii ON i.id = ii.item_id

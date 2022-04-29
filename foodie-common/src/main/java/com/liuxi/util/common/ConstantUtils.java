@@ -34,4 +34,13 @@ public interface ConstantUtils {
      */
     String SUB_CATEGORY_REDIS_KEY = "sub_category:";
 
+    /**
+     * 用户会话缓存 key
+     */
+    String USER_REDIS_TOKEN_KEY = "user:";
+
+    /**
+     * 用户会话 Cookie key
+     */
+    String USER_COOKIE_TOKEN_KEY = "token";
 }
