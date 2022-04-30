@@ -13,7 +13,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
  * @author liu xi
  * @date 2022/4/29 9:41
  */
-@Document(indexName = "foodie-items-ik", type = "doc", createIndex = false)
+@Document(indexName = "foodie-items", type = "doc", createIndex = false)
 @Data
 public class EsItems {
 

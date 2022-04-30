@@ -10,6 +10,9 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,7 +47,19 @@ public class ItemEsServiceImpl implements ItemEsService {
         page--;
 
         // 排序的字段
-        // SortBuilder<FieldSortBuilder> itemNameSort = new FieldSortBuilder(sort).order(SortOrder.DESC);
+        SortBuilder<FieldSortBuilder> itemNameSort = null;
+
+        switch (sort) {
+            case "c":
+                itemNameSort = new FieldSortBuilder("sellCounts").order(SortOrder.DESC);
+                break;
+            case "p":
+                itemNameSort = new FieldSortBuilder("price").order(SortOrder.ASC);
+                break;
+            default:
+                // 需要使用 keyword
+                itemNameSort = new FieldSortBuilder("itemName.keyword").order(SortOrder.DESC);
+        }
 
         // 分页参数
         Pageable pageable = PageRequest.of(page, pageSize);
@@ -55,7 +70,7 @@ public class ItemEsServiceImpl implements ItemEsService {
                 // 设置高亮显示的字段
                 .withHighlightFields(new HighlightBuilder.Field(itemNameField))
                 // 排序
-                // .withSort(itemNameSort)
+                .withSort(itemNameSort)
                 // 分页
                 .withPageable(pageable)
                 .build();

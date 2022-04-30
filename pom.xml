@@ -14,6 +14,8 @@
         <module>foodie-service</module>
         <module>foodie-api</module>
         <module>foodie-elasticsearch</module>
+        <module>foodie-mq-producer</module>
+        <module>foodie-mq-consumer</module>
     </modules>
     <!-- 父工程 -->
     <packaging>pom</packaging>
